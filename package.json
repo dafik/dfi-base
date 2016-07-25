@@ -1,0 +1,16 @@
+{
+  "name": "local-dfi-base",
+  "version": "0.0.1git ",
+  "description": "dfi-base files",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.dev:dfi/dfi-base.git"
+  },
+  "author": "z.wieczorek",
+  "license": "private",
+  "dependencies": {
+    "eventemitter3": "^1.2.0",
+    "local-dfi-debug-logger": "*"
+  }
+}
