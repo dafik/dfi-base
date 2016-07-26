@@ -1,3 +1,3 @@
-module.exports.Object = require('./src/dfiObject');
-module.exports.Model = require('./src/dfiModel');
-module.exports.Collection = require('./src/dfiCollection');
+module.exports.dfiObject = require('./src/dfiObject');
+module.exports.dfiModel = require('./src/dfiModel');
+module.exports.dfiCollection = require('./src/dfiCollection');
