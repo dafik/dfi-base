@@ -17,7 +17,6 @@ class DfiObject extends EE {
     constructor(options) {
         super();
 
-
         privateProperties.set(this, new Map());
 
         if (options) {

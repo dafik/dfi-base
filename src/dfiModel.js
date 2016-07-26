@@ -14,7 +14,7 @@ class DfiModel extends DfiObject {
     constructor(attributes, options) {
         super(options);
 
-        this.set('logger', new DebugLogger('live:tw:' + this.constructor.name));
+        this.set('logger', new DebugLogger('dfi:model:' + this.constructor.name));
         this.attributes = new Map(attributes);
 
         this.stampLastUpdate();

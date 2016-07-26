@@ -1,6 +1,6 @@
 {
   "name": "local-dfi-base",
-  "version": "0.0.1git ",
+  "version": "0.0.1",
   "description": "dfi-base files",
   "main": "index.js",
   "repository": {

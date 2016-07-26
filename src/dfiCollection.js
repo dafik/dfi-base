@@ -3,11 +3,13 @@ const EventEmitter = require('eventemitter3'),
     DebugLogger = require('local-dfi-debug-logger');
 
 class DfiCollection extends EventEmitter {
+
+
     constructor(model, idField) {
         super();
         this.collection = new Map();
 
-        this.logger = new DebugLogger('live:tw:'+this.constructor.name);
+        this.logger = new DebugLogger('dfi:collection:'+this.constructor.name);
     }
 
     has(element) {
