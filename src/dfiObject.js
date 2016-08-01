@@ -9,7 +9,7 @@ var privateProperties = new WeakMap();
 
 
 /**
- * @typedef EventObject
+ * @typedef DfiObject
  * @extends EventEmitter
  *
  */
@@ -24,24 +24,25 @@ class DfiObject extends EE {
         }
     }
 
-    /**
-     * @this EventObject
-     */
     get options() {
         return privateProperties.get(this).get('options');
     }
 
-    get(name) {
-        return privateProperties.get(this).get(name);
+    get(key) {
+        return privateProperties.get(this).get(key);
     }
 
-    set(name, value) {
-        privateProperties.get(this).set(name, value);
+    set(key, value) {
+        privateProperties.get(this).set(key, value);
         return this;
     }
 
-    has(name) {
-        return privateProperties.get(this).has(name);
+    has(key) {
+        return privateProperties.get(this).has(key);
+    }
+
+    delete(key) {
+        return privateProperties.get(this).delete(key);
     }
 
 
@@ -50,14 +51,47 @@ class DfiObject extends EE {
     }
 
     on(name, callback, context) {
+
+        if (name == undefined) {
+            throw new Error('undefined event')
+        } else if (typeof name != 'symbol') {
+            this.logger.warn('event not symbol')
+        }
+
         var ret = super.on(name, callback, context);
+
         if (Array.isArray(this._events[name]) && this._events[name].length > 10) {
-            this.logger.error(new Error('memory leak detected %j'))
+            this.logger.error('memory leak detected: ')
         }
         return ret
     }
 
+
+    once(name, callback, context) {
+
+        if (name == undefined) {
+            throw new Error('undefined event')
+        } else if (typeof name != 'symbol') {
+            this.logger.warn('event not symbol')
+        }
+
+        var ret = super.once(name, callback, context);
+
+        if (Array.isArray(this._events[name]) && this._events[name].length > 10) {
+            this.logger.error('memory leak detected: ')
+        }
+        return ret
+    }
+
+
     emit(event) {
+
+        if (event == undefined) {
+            throw new Error('undefined event')
+        } else if (typeof event != 'symbol') {
+            this.logger.warn('event not symbol')
+        }
+
 
         if (!this._events || (!this._events[event] && !this._events[Events.ALL])) return false;
 
@@ -76,18 +110,44 @@ class DfiObject extends EE {
         }
     }
 
+    get evtObj() {
 
-    destroy() {
-        this.removeAllListeners();
-        privateProperties.get(this._internalId).clear();
-        privateProperties.delete(this._internalId);
+        let val, ret = Object.create(null);
+        for (let ev in this._events) {
+            val = this._events[ev];
+            if (typeof ev == "symbol") {
+                ev = ev.toString();
+            }
+            ret[ev] = val
+        }
+        return val;
+
     }
 
+    destroy(callback) {
+        this.removeAllListeners();
+
+        privateProperties.get(this).clear();
+        privateProperties.delete(this);
+
+        if (typeof callback == "function") {
+            callback();
+        }
+    }
+
+    /**
+     * @returns {{ALL: Symbol}}
+     */
     static get events() {
         return Events;
     }
 }
-const Events = {
-    ALL: Symbol(DfiObject.prototype.constructor.name + ':all')
-};
+
+
+let events = Object.create(null);
+
+events['ALL'] = Symbol(DfiObject.prototype.constructor.name + ':all');
+const Events = events;
+
+
 module.exports = DfiObject;

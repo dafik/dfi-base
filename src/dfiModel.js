@@ -12,10 +12,23 @@ const
 
 class DfiModel extends DfiObject {
     constructor(attributes, options) {
-        super(options);
+        super();
 
-        this.set('logger', new DebugLogger('dfi:model:' + this.constructor.name));
-        this.attributes = new Map(attributes);
+        this.attributes = new Map();
+        for (let attribute in attributes) {
+            this.set(attribute, attributes[attribute]);
+        }
+
+        for (let property in options) {
+            this.setProp(property, options[property]);
+        }
+
+        if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
+            this.id = this.get(this.getProp('idAttribute'));
+        }
+
+        this.setProp('logger', new DebugLogger('dfi:model:' + this.constructor.name));
+
 
         this.stampLastUpdate();
 
@@ -27,7 +40,7 @@ class DfiModel extends DfiObject {
     }
 
     stampLastUpdate() {
-        super.set('lastUpdate', Date.now());
+        this.setProp('lastUpdate', Date.now());
     }
 
     get logger() {
@@ -72,20 +85,52 @@ class DfiModel extends DfiObject {
         return this;
     }
 
-    unset(attribute) {
+    delete(attribute) {
         return this.attributes.delete(attribute);
     }
 
+    getProp(key) {
+        return super.get(key);
+    }
 
+    setProp(key, value) {
+        return super.set(key, value);
+    }
+
+    hasProp(key) {
+        return super.has(key);
+    }
+
+    deleteProp(key) {
+        return super.delete(key);
+    }
+
+
+    /**
+     * @returns {{ADD:Symbol,UPDATE:Symbol,ALL: Symbol}}
+     */
     static get events() {
         return Events;
     }
+
+    toJSON() {
+        let attr = {};
+        this.attributes.forEach((value, name) => {
+            attr[name] = value
+        })
+        return attr
+    }
 }
 
-const Events = {
-    ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
-    UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
-};
+let events = Object.create(null);
+for (let name in DfiObject.events) {
+    events[name] = DfiObject.events[name];
+}
+
+events['ADD'] = Symbol('model:add');
+events['UPDATE'] = Symbol('model:update');
+
+const Events = events;
 
 
 module.exports = DfiModel;

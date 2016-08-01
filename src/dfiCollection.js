@@ -1,15 +1,22 @@
 "use strict";
-const EventEmitter = require('eventemitter3'),
+const DfiObject = require('local-dfi-base').dfiObject,
     DebugLogger = require('local-dfi-debug-logger');
 
-class DfiCollection extends EventEmitter {
+class DfiCollection extends DfiObject {
 
 
-    constructor(model, idField) {
+    constructor(options) {
         super();
         this.collection = new Map();
 
-        this.logger = new DebugLogger('dfi:collection:'+this.constructor.name);
+        if (options.idField) {
+            super.set('idField', options.idField);
+        }
+        if (options.model) {
+            super.set('model', options.model);
+        }
+
+        super.set('logger', new DebugLogger((options.loggerName ? options.loggerName : 'dfi:collection:') + this.constructor.name));
     }
 
     has(element) {
@@ -27,23 +34,24 @@ class DfiCollection extends EventEmitter {
     }
 
     add(element) {
-        var res = this.collection.set(this._getId(element), element);
-        this.emit('add', element, this.collection);
-        this.emit('update', this.collection, element, 1);
+        let id = this._getId(element);
+        let res = this.collection.set(id, element);
+        this.emit(Events.ADD, element, this.collection);
+        this.emit(Events.UPDATE, this.collection, element, 1);
         return res
     }
 
     remove(element) {
         var id;
-        if (element instanceof this._model) {
+        if (element instanceof super.get('model')) {
             id = this._getId(element)
         } else {
             id = element;
         }
         element = this.collection.get(id);
         var res = this.collection.delete(id);
-        this.emit('remove', element, this.collection);
-        this.emit('update', this.collection, element, -1);
+        this.emit(Events.REMOVE, element, this.collection);
+        this.emit(Events.UPDATE, this.collection, element, -1);
         return res
     }
 
@@ -68,7 +76,8 @@ class DfiCollection extends EventEmitter {
     }
 
     _getId(element) {
-        return element[this._idField];
+        let idField = super.get('idField') || 'id';
+        return element.get(idField);
     }
 
     toArray() {
@@ -82,7 +91,16 @@ class DfiCollection extends EventEmitter {
     }
 
     toJSON() {
-        return {size: this.collection.size, entries: this.collection.toJSON()};
+        let out = {
+            size: this.collection.size,
+            entries: Object.create(null)
+        };
+        this.collection.forEach((value, key)=> {
+            out[key] = value
+        });
+
+
+        return out;
     }
 
     get size() {
@@ -96,6 +114,23 @@ class DfiCollection extends EventEmitter {
         delete  this.logger;
     }
 
+    /**
+     * @returns {{ADD:Symbol,UPDATE:Symbol,REMOVE:Symbol,ALL: Symbol}}
+     */
+    static get events() {
+        return Events;
+    }
 }
 
-module.exports = DfiCollection
+let events = Object.create(null);
+for (let name in DfiObject.events) {
+    events[name] = DfiObject.events[name];
+}
+
+events['ADD'] = Symbol('collection:add');
+events['REMOVE'] = Symbol('collection:remove');
+events['UPDATE'] = Symbol('collection:update');
+
+const Events = events;
+
+module.exports = DfiCollection;
