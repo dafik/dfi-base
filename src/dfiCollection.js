@@ -96,7 +96,7 @@ class DfiCollection extends DfiObject {
             entries: Object.create(null)
         };
         this.collection.forEach((value, key)=> {
-            out[key] = value
+            out['entries'][key] = value
         });
 
 
