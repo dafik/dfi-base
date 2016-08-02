@@ -55,7 +55,7 @@ class DfiObject extends EE {
         if (name == undefined) {
             throw new Error('undefined event')
         } else if (typeof name != 'symbol') {
-            this.logger.warn('event not symbol')
+            this.logger.warn('one event not symbol "%s"', name)
         }
 
         var ret = super.on(name, callback, context);
@@ -72,7 +72,7 @@ class DfiObject extends EE {
         if (name == undefined) {
             throw new Error('undefined event')
         } else if (typeof name != 'symbol') {
-            this.logger.warn('event not symbol')
+            this.logger.warn('once event not symbol "%s"', name)
         }
 
         var ret = super.once(name, callback, context);
@@ -89,7 +89,7 @@ class DfiObject extends EE {
         if (event == undefined) {
             throw new Error('undefined event')
         } else if (typeof event != 'symbol') {
-            this.logger.warn('event not symbol')
+            this.logger.warn('emit event not symbol "%s"', event)
         }
 
 
