@@ -135,6 +135,11 @@ class DfiObject extends EE {
         }
     }
 
+    __getProp() {
+        return privateProperties.get(this);
+    }
+
+
     /**
      * @returns {{ALL: Symbol}}
      */

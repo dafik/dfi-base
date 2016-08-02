@@ -120,6 +120,19 @@ class DfiModel extends DfiObject {
         })
         return attr
     }
+
+    toPlain() {
+        let attr = {};
+        this.attributes.forEach((value, name) => {
+            attr[name] = value
+        })
+
+        let prop = {};
+        this.__getProp().forEach((value, name) => {
+            prop[name] = value
+        })
+        return {attr: attr, prop: prop};
+    }
 }
 
 let events = Object.create(null);
