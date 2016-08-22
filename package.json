@@ -1,6 +1,6 @@
 {
   "name": "local-dfi-base",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "dfi-base files",
   "main": "index.js",
   "repository": {
