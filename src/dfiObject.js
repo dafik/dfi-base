@@ -45,6 +45,7 @@ class DfiObject extends EE {
         return privateProperties.get(this).has(key);
     }
 
+    //noinspection ReservedWordAsName
     delete(key) {
         return privateProperties.get(this).delete(key);
     }
@@ -62,6 +63,14 @@ class DfiObject extends EE {
         } else if (typeof name != 'symbol') {
             this.logger.warn('one event not symbol "%s"', name)
         }
+        if (!this._events) {
+            this._events = {_length: 0, _names: []}
+        }
+        if (!this._events[name]) {
+            this._events._length++;
+            this._events._names.push(Symbol.prototype.toString.call(name))
+        }
+
 
         var ret = super.on(name, callback, context);
 
@@ -79,6 +88,13 @@ class DfiObject extends EE {
         } else if (typeof name != 'symbol') {
             this.logger.warn('once event not symbol "%s"', name)
         }
+        if (!this._events) {
+            this._events = {_length: 0, _names: []}
+        }
+        if (!this._events[name]) {
+            this._events._length++;
+            this._events._names.push(Symbol.prototype.toString.call(name))
+        }
 
         var ret = super.once(name, callback, context);
 
@@ -89,16 +105,16 @@ class DfiObject extends EE {
     }
 
 
-    emit(event) {
+    emit(name) {
 
-        if (event == undefined) {
+        if (name == undefined) {
             throw new Error('undefined event')
-        } else if (typeof event != 'symbol') {
-            this.logger.warn('emit event not symbol "%s"', event)
+        } else if (typeof name != 'symbol') {
+            this.logger.warn('emit event not symbol "%s"', name)
         }
 
 
-        if (!this._events || (!this._events[event] && !this._events[Events.ALL])) return false;
+        if (!this._events || (!this._events[name] && !this._events[Events.ALL])) return false;
 
         if (this._events[Events.ALL]) {
             super.emit.apply(this, arguments);
@@ -109,9 +125,22 @@ class DfiObject extends EE {
             for (let i = 0; i < len; i++) {
                 args[i + 1] = arguments[i];
             }
-            return super.emit.apply(this, args);
+            super.emit.apply(this, args);
         } else {
-            return super.emit.apply(this, arguments)
+            super.emit.apply(this, arguments)
+        }
+
+        if (!this._events[name]) {
+            if (this._events._length) {
+                this._events._length--;
+                let eName = Symbol.prototype.toString.call(name);
+                if (this._events._names) {
+                    let index = this._events._names.indexOf(eName);
+                    if (index) {
+                        this._events._names.splice(index, 1)
+                    }
+                }
+            }
         }
     }
 
@@ -129,15 +158,13 @@ class DfiObject extends EE {
 
     }
 
-    destroy(callback) {
+    destroy() {
         this.removeAllListeners();
 
         privateProperties.get(this).clear();
         privateProperties.delete(this);
 
-        if (typeof callback == "function") {
-            callback();
-        }
+        this.destroyed = true;
     }
 
     __getProp() {
