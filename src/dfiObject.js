@@ -28,6 +28,10 @@ class DfiObject extends EE {
         return privateProperties.get(this).get('options');
     }
 
+    get logger() {
+        return privateProperties.get(this).get('logger');
+    }
+
     get(key) {
         return privateProperties.get(this).get(key);
     }
@@ -49,6 +53,7 @@ class DfiObject extends EE {
     initialize() {
 
     }
+
 
     on(name, callback, context) {
 
