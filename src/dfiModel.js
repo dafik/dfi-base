@@ -11,6 +11,10 @@ const
  */
 
 class DfiModel extends DfiObject {
+    /**
+     * @param {{}} attributes
+     * @param {{}} options
+     */
     constructor(attributes, options) {
         super();
 
@@ -52,11 +56,15 @@ class DfiModel extends DfiObject {
     }
 
     destroy() {
+
         super.destroy();
 
         this.attributes.clear();
         delete this.attributes;
         delete this.id;
+
+        this.destroyed = true;
+
     }
 
     get(attribute) {
@@ -85,6 +93,7 @@ class DfiModel extends DfiObject {
         return this;
     }
 
+    //noinspection ReservedWordAsName
     delete(attribute) {
         return this.attributes.delete(attribute);
     }
@@ -117,7 +126,7 @@ class DfiModel extends DfiObject {
         let attr = {};
         this.attributes.forEach((value, name) => {
             attr[name] = value
-        })
+        });
         return attr
     }
 
@@ -125,12 +134,12 @@ class DfiModel extends DfiObject {
         let attr = {};
         this.attributes.forEach((value, name) => {
             attr[name] = value
-        })
+        });
 
         let prop = {};
         this.__getProp().forEach((value, name) => {
             prop[name] = value
-        })
+        });
         return {attr: attr, prop: prop};
     }
 }

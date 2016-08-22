@@ -1,5 +1,5 @@
 "use strict";
-const DfiObject = require('local-dfi-base').dfiObject,
+const DfiObject = require('./dfiObject'),
     DebugLogger = require('local-dfi-debug-logger');
 
 class DfiCollection extends DfiObject {
@@ -49,9 +49,12 @@ class DfiCollection extends DfiObject {
             id = element;
         }
         element = this.collection.get(id);
-        var res = this.collection.delete(id);
-        this.emit(Events.REMOVE, element, this.collection);
-        this.emit(Events.UPDATE, this.collection, element, -1);
+        var res = false;
+        if (element) {
+            res = this.collection.delete(id);
+            this.emit(Events.REMOVE, element, this.collection);
+            this.emit(Events.UPDATE, this.collection, element, -1);
+        }
         return res
     }
 
