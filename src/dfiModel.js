@@ -47,9 +47,7 @@ class DfiModel extends DfiObject {
         this.setProp('lastUpdate', Date.now());
     }
 
-    get logger() {
-        return super.get('logger');
-    }
+
 
     initialize() {
 

@@ -35,6 +35,9 @@ class DfiCollection extends DfiObject {
 
     add(element) {
         let id = this._getId(element);
+        if (!id) {
+            this.logger.error('no id for model found');
+        }
         let res = this.collection.set(id, element);
         this.emit(Events.ADD, element, this.collection);
         this.emit(Events.UPDATE, this.collection, element, 1);
@@ -111,10 +114,8 @@ class DfiCollection extends DfiObject {
     }
 
     destroy() {
-
         this.removeAllListeners();
         delete this.collection;
-        delete  this.logger;
     }
 
     /**
