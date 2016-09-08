@@ -34,11 +34,15 @@ class DfiCollection extends DfiObject {
     }
 
     add(element) {
-        let id = this._getId(element);
+        let id = this._getId(element), res;
         if (!id) {
             this.logger.error('no id for model found');
+        } else {
+            if (!element.id) {
+                element.id = id;
+            }
+            res = this.collection.set(id, element);
         }
-        let res = this.collection.set(id, element);
         this.emit(Events.ADD, element, this.collection);
         this.emit(Events.UPDATE, this.collection, element, 1);
         return res
@@ -73,7 +77,7 @@ class DfiCollection extends DfiObject {
 
     clear() {
         this.collection.clear();
-        this.emit('update', this.collection, null, 0);
+        this.emit(Events.UPDATE, this.collection, null, 0);
         return this;
     }
 
@@ -119,7 +123,7 @@ class DfiCollection extends DfiObject {
     }
 
     /**
-     * @returns {{ADD:Symbol,UPDATE:Symbol,REMOVE:Symbol,ALL: Symbol}}
+     * @returns {{ADD,UPDATE,REMOVE,ALL,DESTROY}}
      */
     static get events() {
         return Events;
