@@ -58,7 +58,6 @@ class DfiModel extends DfiObject {
 
         this.attributes.clear();
         delete this.attributes;
-        delete this.id;
 
         this.destroyed = true;
 

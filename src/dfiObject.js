@@ -61,14 +61,18 @@ class DfiObject extends EE {
         if (name == undefined) {
             throw new Error('undefined event')
         } else if (typeof name != 'symbol') {
-            this.logger.warn('one event not symbol "%s"', name)
+            this.logger.warn('on event not symbol "%s"', name)
         }
         if (!this._events) {
             this._events = {_length: 0, _names: []}
         }
         if (!this._events[name]) {
             this._events._length++;
-            this._events._names.push(Symbol.prototype.toString.call(name))
+            let label = name;
+            if (typeof name == 'symbol') {
+                label = Symbol.prototype.toString.call(name)
+            }
+            this._events._names.push(label);
         }
 
 
