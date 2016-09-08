@@ -30,7 +30,6 @@ class DfiModel extends DfiObject {
         if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
             this.id = this.get(this.getProp('idAttribute'));
         }
-
         this.setProp('logger', new DebugLogger('dfi:model:' + this.constructor.name));
 
 
@@ -48,12 +47,12 @@ class DfiModel extends DfiObject {
     }
 
 
-
     initialize() {
 
     }
 
     destroy() {
+
 
         super.destroy();
 
@@ -66,12 +65,12 @@ class DfiModel extends DfiObject {
     }
 
     get(attribute) {
-
-        if (this.attributes.has(attribute)) {
-            return this.attributes.get(attribute);
-        }
-        if (attribute == 'id' && this.hasOwnProperty('id')) {
-            return this.id;
+        if (this.attributes) {
+            if (this.attributes.has(attribute)) {
+                return this.attributes.get(attribute);
+            }
+        } else {
+            let ee = 1;
         }
         return undefined;
     }
@@ -84,7 +83,7 @@ class DfiModel extends DfiObject {
         var old = this.get(attribute);
         this.attributes.set(attribute, value);
         if (old == undefined) {
-            this.emit(Events.ADD, this);
+            this.emit(Events.ADD, this, attribute, value);
         }
         this.emit(Events.UPDATE, this, attribute, value, old);
 
@@ -93,7 +92,12 @@ class DfiModel extends DfiObject {
 
     //noinspection ReservedWordAsName
     delete(attribute) {
-        return this.attributes.delete(attribute);
+        let value = this.attributes.get(attribute);
+        this.attributes.delete(attribute);
+
+        this.emit(Events.DELETE, this, attribute, value);
+        this.emit(Events.UPDATE, this, attribute, value);
+        return this
     }
 
     getProp(key) {
@@ -114,7 +118,7 @@ class DfiModel extends DfiObject {
 
 
     /**
-     * @returns {{ADD:Symbol,UPDATE:Symbol,ALL: Symbol}}
+     * @returns {{ADD,DELETE,UPDATE,ALL,DESTROY}}
      */
     static get events() {
         return Events;
@@ -147,8 +151,9 @@ for (let name in DfiObject.events) {
     events[name] = DfiObject.events[name];
 }
 
-events['ADD'] = Symbol('model:add');
-events['UPDATE'] = Symbol('model:update');
+events['ADD'] = Symbol(DfiObject.prototype.constructor.name + ':add');
+events['DELETE'] = Symbol(DfiObject.prototype.constructor.name + ':delete');
+events['UPDATE'] = Symbol(DfiObject.prototype.constructor.name + ':update');
 
 const Events = events;
 

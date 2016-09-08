@@ -117,7 +117,9 @@ class DfiObject extends EE {
         if (!this._events || (!this._events[name] && !this._events[Events.ALL])) return false;
 
         if (this._events[Events.ALL]) {
-            super.emit.apply(this, arguments);
+            if (this._events[name]) {
+                super.emit.apply(this, arguments);
+            }
 
             let len = arguments.length,
                 args = new Array(len);
@@ -132,11 +134,11 @@ class DfiObject extends EE {
 
         if (!this._events[name]) {
             if (this._events._length) {
-                this._events._length--;
                 let eName = Symbol.prototype.toString.call(name);
                 if (this._events._names) {
                     let index = this._events._names.indexOf(eName);
-                    if (index) {
+                    if (index !== -1) {
+                        this._events._length--;
                         this._events._names.splice(index, 1)
                     }
                 }
@@ -144,21 +146,34 @@ class DfiObject extends EE {
         }
     }
 
-    get evtObj() {
-
-        let val, ret = Object.create(null);
-        for (let ev in this._events) {
-            val = this._events[ev];
-            if (typeof ev == "symbol") {
-                ev = ev.toString();
-            }
-            ret[ev] = val
+    off(name) {
+        if (name == undefined) {
+            throw new Error('undefined event')
+        } else if (typeof name != 'symbol') {
+            this.logger.warn('off event not symbol "%s"', name)
         }
-        return val;
 
+        if (!this._events[name]) {
+            return;
+        }
+
+        super.off.apply(this, arguments);
+        if (!this._events[name]) {
+            if (this._events._length) {
+                let eName = Symbol.prototype.toString.call(name);
+                if (this._events._names) {
+                    let index = this._events._names.indexOf(eName);
+                    if (index !== -1) {
+                        this._events._length--;
+                        this._events._names.splice(index, 1)
+                    }
+                }
+            }
+        }
     }
 
     destroy() {
+        this.emit(DfiObject.events.DESTROY);
         this.removeAllListeners();
 
         privateProperties.get(this).clear();
@@ -173,7 +188,7 @@ class DfiObject extends EE {
 
 
     /**
-     * @returns {{ALL: Symbol}}
+     * @returns {{ALL,DESTROY}}
      */
     static get events() {
         return Events;
@@ -184,6 +199,7 @@ class DfiObject extends EE {
 let events = Object.create(null);
 
 events['ALL'] = Symbol(DfiObject.prototype.constructor.name + ':all');
+events['DESTROY'] = Symbol(DfiObject.prototype.constructor.name + ':destroy');
 const Events = events;
 
 
