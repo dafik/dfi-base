@@ -4,7 +4,11 @@ const DfiObject = require('./dfiObject'),
 
 class DfiCollection extends DfiObject {
 
-
+    /**
+     *
+     * @param options
+     * @property {Map} proxyCallbacks
+     */
     constructor(options) {
         super();
         this.collection = new Map();
@@ -15,6 +19,7 @@ class DfiCollection extends DfiObject {
         if (options.model) {
             super.set('model', options.model);
         }
+        this.proxyCallbacks = new Map();
 
         super.set('logger', new DebugLogger((options.loggerName ? options.loggerName : 'dfi:collection:') + this.constructor.name));
     }
@@ -42,9 +47,13 @@ class DfiCollection extends DfiObject {
                 element.id = id;
             }
             res = this.collection.set(id, element);
+
+            element.on(DfiObject.events.ALL, this._onMemberAll, this);
+
+
+            this.emit(Events.ADD, element, this.collection);
+            this.emit(Events.UPDATE, this.collection, element, 1);
         }
-        this.emit(Events.ADD, element, this.collection);
-        this.emit(Events.UPDATE, this.collection, element, 1);
         return res
     }
 
@@ -59,6 +68,8 @@ class DfiCollection extends DfiObject {
         var res = false;
         if (element) {
             res = this.collection.delete(id);
+            element.on(DfiObject.events.ALL, this._onMemberAll, this);
+
             this.emit(Events.REMOVE, element, this.collection);
             this.emit(Events.UPDATE, this.collection, element, -1);
         }
@@ -120,6 +131,61 @@ class DfiCollection extends DfiObject {
     destroy() {
         this.removeAllListeners();
         delete this.collection;
+    }
+
+    _onMemberAll(event) {
+        if (this.proxyCallbacks.size > 0) {
+            if (this.proxyCallbacks.has(event)) {
+                let args = Array.prototype.slice.call(arguments);
+                args.shift();
+                let handlers = this.proxyCallbacks.get(event);
+                handlers.forEach((handler)=> {
+                    handler.f.apply(handler.t, args);
+                })
+            } else if (this.proxyCallbacks.has(DfiObject.events.ALL)) {
+                let args = Array.prototype.slice.call(arguments);
+                let handlers = this.proxyCallbacks.get(DfiObject.events.ALL);
+                handlers.forEach((handler)=> {
+                    handler.c.apply(handler.t, args);
+                })
+            }
+        }
+    }
+
+    proxyOn(event, callback, thisp) {
+
+        let proxyCallbacks = this.proxyCallbacks;
+        if (!proxyCallbacks.has(event)) {
+            proxyCallbacks.set(event, new Set());
+        }
+        let assigner = {
+            c: callback,
+            t: thisp,
+        };
+        let handlers = proxyCallbacks.get(event);
+        handlers.add(assigner);
+    }
+
+    proxyOff(event, callback, thisp) {
+        let handlers = this.proxyCallbacks.get(event);
+        if (handlers) {
+            handlers.forEach((handler)=> {
+                if ((handler.c == callback && handler.t == thisp) || !callback) {
+                    handlers.delete(handler);
+                }
+            });
+            if (handlers.size == 0) {
+                this.proxyCallbacks.delete(event);
+            }
+        }
+    }
+
+    proxyOffAll() {
+        this.proxyCallbacks.forEach((handlers, event)=> {
+            handlers.forEach((handler) => {
+                this.proxyOff(event, handler.c, handler.t);
+            })
+        });
     }
 
     /**

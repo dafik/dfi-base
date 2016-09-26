@@ -78,14 +78,25 @@ class DfiModel extends DfiObject {
         return this.attributes.has(attribute);
     }
 
-    set(attribute, value) {
+    set(attribute, value, silent) {
+        if (typeof attribute == 'object') {
+            silent = value;
+            for (let attr in attribute) {
+                if (attribute.hasOwnProperty(attr)) {
+                    this.set(attr, attribute[attr], silent)
+                }
+            }
+            return this;
+        }
         var old = this.get(attribute);
         this.attributes.set(attribute, value);
-        if (old == undefined) {
-            this.emit(Events.ADD, this, attribute, value);
+        this.stampLastUpdate();
+        if (silent != true) {
+            if (old == undefined) {
+                this.emit(Events.ADD, this, attribute, value);
+            }
+            this.emit(Events.UPDATE, this, attribute, value, old);
         }
-        this.emit(Events.UPDATE, this, attribute, value, old);
-
         return this;
     }
 

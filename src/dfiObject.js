@@ -124,13 +124,8 @@ class DfiObject extends EE {
             if (this._events[name]) {
                 super.emit.apply(this, arguments);
             }
-
-            let len = arguments.length,
-                args = new Array(len);
-            args[0] = Events.ALL;
-            for (let i = 0; i < len; i++) {
-                args[i + 1] = arguments[i];
-            }
+            let args = Array.prototype.slice.call(arguments);
+            args.unshift(Events.ALL);
             super.emit.apply(this, args);
         } else {
             super.emit.apply(this, arguments)
@@ -157,14 +152,19 @@ class DfiObject extends EE {
             this.logger.warn('off event not symbol "%s"', name)
         }
 
-        if (typeof this._events[name] == "undefined") {
+        if (!this._events[name]) {
             return;
         }
 
         super.off.apply(this, arguments);
         if (!this._events[name]) {
             if (this._events._length) {
-                let eName = Symbol.prototype.toString.call(name);
+                let eName;
+                if (typeof name == "symbol") {
+                    eName = Symbol.prototype.toString.call(name);
+                } else {
+                    eName = name;
+                }
                 if (this._events._names) {
                     let index = this._events._names.indexOf(eName);
                     if (index !== -1) {
