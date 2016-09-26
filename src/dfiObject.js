@@ -157,7 +157,7 @@ class DfiObject extends EE {
             this.logger.warn('off event not symbol "%s"', name)
         }
 
-        if (!this._events[name]) {
+        if (typeof this._events[name] == "undefined") {
             return;
         }
 
