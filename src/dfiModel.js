@@ -98,6 +98,7 @@ class DfiModel extends DfiObject {
             this.emit(Events.UPDATE, this, attribute, value, old);
         }
         return this;
+
     }
 
     //noinspection ReservedWordAsName

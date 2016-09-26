@@ -128,6 +128,7 @@ class DfiObject extends EE {
             args.unshift(Events.ALL);
             super.emit.apply(this, args);
         } else {
+
             super.emit.apply(this, arguments)
         }
 

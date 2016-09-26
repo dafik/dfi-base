@@ -164,6 +164,7 @@ class DfiCollection extends DfiObject {
         };
         let handlers = proxyCallbacks.get(event);
         handlers.add(assigner);
+
     }
 
     proxyOff(event, callback, thisp) {
