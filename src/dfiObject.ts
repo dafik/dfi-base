@@ -200,7 +200,10 @@ export interface IDfiBaseObjectEvents extends Object {
     DESTROY: symbol
 }
 
-const Events: IDfiBaseObjectEvents = Object.assign({}, {
-    ALL: Symbol(DfiObject.prototype.constructor.name + ':all'),
-    DESTROY: Symbol(DfiObject.prototype.constructor.name + ':destroy')
-});
+const Events: IDfiBaseObjectEvents = Object.assign(
+    Object.assign({}, DfiObject.events),
+    {
+        ALL: Symbol(DfiObject.prototype.constructor.name + ':all'),
+        DESTROY: Symbol(DfiObject.prototype.constructor.name + ':destroy')
+    }
+);

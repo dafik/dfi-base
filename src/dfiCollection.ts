@@ -206,11 +206,14 @@ export interface IDfiBaseCollectionEvents extends IDfiBaseObjectEvents {
     DELETE: symbol,
     UPDATE: symbol
 }
-const Events: IDfiBaseCollectionEvents = Object.assign(DfiModel.events, {
-    ADD: Symbol(DfiObject.prototype.constructor.name + ':add'),
-    DELETE: Symbol(DfiObject.prototype.constructor.name + ':delete'),
-    UPDATE: Symbol(DfiObject.prototype.constructor.name + ':update')
-});
+const Events: IDfiBaseCollectionEvents = Object.assign(
+    Object.assign({}, DfiObject.events),
+    {
+        ADD: Symbol(DfiObject.prototype.constructor.name + ':add'),
+        DELETE: Symbol(DfiObject.prototype.constructor.name + ':delete'),
+        UPDATE: Symbol(DfiObject.prototype.constructor.name + ':update')
+    }
+);
 
 
 

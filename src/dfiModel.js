@@ -106,9 +106,9 @@ class DfiModel extends dfiObject_1.default {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DfiModel;
-const Events = Object.assign(DfiModel.events, {
-    ADD: Symbol(dfiObject_1.default.prototype.constructor.name + ':add'),
-    DELETE: Symbol(dfiObject_1.default.prototype.constructor.name + ':delete'),
-    UPDATE: Symbol(dfiObject_1.default.prototype.constructor.name + ':update')
+const Events = Object.assign(Object.assign({}, dfiObject_1.default.events), {
+    ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
+    DELETE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
+    UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
 });
 //# sourceMappingURL=dfiModel.js.map

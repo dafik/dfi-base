@@ -153,7 +153,7 @@ class DfiObject extends EventEmitter {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DfiObject;
-const Events = Object.assign({}, {
+const Events = Object.assign(Object.assign({}, DfiObject.events), {
     ALL: Symbol(DfiObject.prototype.constructor.name + ':all'),
     DESTROY: Symbol(DfiObject.prototype.constructor.name + ':destroy')
 });

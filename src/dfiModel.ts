@@ -79,6 +79,7 @@ abstract class DfiModel extends DfiObject {
         return this;
 
     }
+
     delete(attribute) {
         let value = this.attributes.get(attribute);
         let ret = this.attributes.delete(attribute);
@@ -137,8 +138,11 @@ export interface IDfiBaseModelEvents extends IDfiBaseObjectEvents {
     DELETE: symbol,
     UPDATE: symbol
 }
-const Events: IDfiBaseModelEvents = Object.assign(DfiModel.events, {
-    ADD: Symbol(DfiObject.prototype.constructor.name + ':add'),
-    DELETE: Symbol(DfiObject.prototype.constructor.name + ':delete'),
-    UPDATE: Symbol(DfiObject.prototype.constructor.name + ':update')
-});
+const Events: IDfiBaseModelEvents = Object.assign(
+    Object.assign({}, DfiObject.events),
+    {
+        ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
+        DELETE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
+        UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
+    }
+);

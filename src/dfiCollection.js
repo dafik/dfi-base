@@ -1,6 +1,5 @@
 "use strict";
 const dfiObject_1 = require("./dfiObject");
-const dfiModel_1 = require("./dfiModel");
 class DfiCollection extends dfiObject_1.default {
     constructor(options) {
         options.loggerName = 'dfi:collection:';
@@ -163,7 +162,7 @@ class DfiCollection extends dfiObject_1.default {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DfiCollection;
-const Events = Object.assign(dfiModel_1.default.events, {
+const Events = Object.assign(Object.assign({}, dfiObject_1.default.events), {
     ADD: Symbol(dfiObject_1.default.prototype.constructor.name + ':add'),
     DELETE: Symbol(dfiObject_1.default.prototype.constructor.name + ':delete'),
     UPDATE: Symbol(dfiObject_1.default.prototype.constructor.name + ':update')
