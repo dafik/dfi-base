@@ -10,8 +10,6 @@
   "author": "z.wieczorek",
   "license": "UNLICENSED",
   "dependencies": {
-    "@types/eventemitter3": "^1.1.29",
-    "eventemitter3": "^1.2.0",
     "local-dfi-debug-logger": "*"
   }
 }

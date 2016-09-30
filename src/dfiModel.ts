@@ -1,31 +1,40 @@
-import DfiObject, {IDfiBaseObjectEvents, IDfiBaseObjectConfig} from "./dfiObject";
+import DfiObject = require("./dfiObject");
+import {IDfiBaseObjectConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
 
+var ModelUniqueId = (function () {
+    var nextId = 1;
+    return function () {
+        return nextId++;
+    }
+})();
 
 abstract class DfiModel extends DfiObject {
 
     attributes: Map<any,any>;
-    id: string;
 
     constructor(attributes: Object, options: IDfiBaseObjectConfig) {
-        options.loggerName = 'dfi:model:'
+        options = options || {};
+        if (!options.loggerName) {
+            options.loggerName = 'dfi:model:'
+        }
 
         super(options);
 
-        this.attributes = new Map();
+        this.setProp('attributes', new Map());
         for (let attribute in attributes) {
             this.set(attribute, attributes[attribute]);
         }
-        for (let property in options) {
-            this.setProp(property, options[property]);
-        }
+
         if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
-            this.id = this.get(this.getProp('idAttribute'));
+            this.setProp('id', this.get(this.getProp('idAttribute')));
+        } else {
+            this.setProp('id', options.loggerName + ModelUniqueId());
         }
         this.stampLastUpdate();
     }
 
-    getLastUpdateMillis() {
-        return super.get('lastUpdate');
+    get id(): any {
+        return this.getProp('id');
     }
 
     stampLastUpdate(): void {
@@ -33,28 +42,22 @@ abstract class DfiModel extends DfiObject {
     }
 
     destroy() {
+        this.getProp('attributes').clear();
         super.destroy();
-
-        this.attributes.clear();
-        delete this.attributes;
-
         this.destroyed = true;
-
     }
 
     get(attribute: string): any {
-        if (this.attributes) {
-            if (this.attributes.has(attribute)) {
-                return this.attributes.get(attribute);
+        if (this.getProp('attributes')) {
+            if (this.getProp('attributes').has(attribute)) {
+                return this.getProp('attributes').get(attribute);
             }
-        } else {
-            let ee = 1;
         }
         return undefined;
     }
 
     has(attribute: string): boolean {
-        return this.attributes.has(attribute);
+        return this.getProp('attributes').has(attribute);
     }
 
     set(attribute: string | Object, value: any, silent?: boolean): this {
@@ -68,7 +71,7 @@ abstract class DfiModel extends DfiObject {
             return this;
         }
         var old = this.get(attribute);
-        let ret = this.attributes.set(attribute, value);
+        this.getProp('attributes').set(attribute, value);
         this.stampLastUpdate();
         if (silent != true) {
             if (old == undefined) {
@@ -80,29 +83,13 @@ abstract class DfiModel extends DfiObject {
 
     }
 
-    delete(attribute) {
-        let value = this.attributes.get(attribute);
-        let ret = this.attributes.delete(attribute);
+    remove(attribute) {
+        let value = this.getProp('attributes').get(attribute);
+        let ret = this.getProp('attributes').delete(attribute);
 
         this.emit(Events.DELETE, this, attribute, value);
         this.emit(Events.UPDATE, this, attribute, value);
         return ret;
-    }
-
-    getProp(key) {
-        return super.get(key);
-    }
-
-    setProp(key: any, value: any) {
-        return super.set(key, value);
-    }
-
-    hasProp(key) {
-        return super.has(key);
-    }
-
-    deleteProp(key) {
-        return super.delete(key);
     }
 
     static get events(): IDfiBaseModelEvents {
@@ -111,33 +98,32 @@ abstract class DfiModel extends DfiObject {
 
     toJSON(): Object {
         let attr = {};
-        this.attributes.forEach((value, name) => {
+        this.getProp('attributes').forEach((value, name) => {
             attr[name] = value
         });
+        attr['id'] = this.id;
         return attr
     }
 
     toPlain(): Object {
         let attr = {};
-        this.attributes.forEach((value, name) => {
+        this.getProp('attributes').forEach((value, name) => {
             attr[name] = value
         });
 
         let prop = {};
         this.__getProp().forEach((value, name) => {
-            prop[name] = value
+            if (name !== 'attributes') {
+                prop[name] = value
+            }
+
         });
         return {attr: attr, prop: prop};
     }
 }
 
-export default  DfiModel;
+export =  DfiModel;
 
-export interface IDfiBaseModelEvents extends IDfiBaseObjectEvents {
-    ADD: symbol,
-    DELETE: symbol,
-    UPDATE: symbol
-}
 const Events: IDfiBaseModelEvents = Object.assign(
     Object.assign({}, DfiObject.events),
     {

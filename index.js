@@ -1,8 +1,10 @@
 "use strict";
-const dfiObject_1 = require("./src/dfiObject");
-exports.DfiObject = dfiObject_1.default;
-const dfiModel_1 = require("./src/dfiModel");
-exports.DfiModel = dfiModel_1.default;
-const dfiCollection_1 = require("./src/dfiCollection");
-exports.DfiCollection = dfiCollection_1.default;
+const DfiObject = require("./src/dfiObject");
+exports.DfiObject = DfiObject;
+const DfiModel = require("./src/dfiModel");
+exports.DfiModel = DfiModel;
+const DfiCollection = require("./src/dfiCollection");
+exports.DfiCollection = DfiCollection;
+const EventEmitter = require("./src/dfiEventEmitter");
+exports.EventEmitter = EventEmitter;
 //# sourceMappingURL=index.js.map

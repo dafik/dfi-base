@@ -1,15 +1,18 @@
 "use strict";
-const EventEmitter = require("eventemitter3");
-const local_dfi_debug_logger_1 = require("local-dfi-debug-logger");
+const DebugLogger = require("local-dfi-debug-logger/debugLogger");
+const EventEmitter = require("./dfiEventEmitter");
 var privateProperties = new WeakMap();
-class DfiObject extends EventEmitter {
+class DfiObject {
     constructor(options) {
-        super();
         privateProperties.set(this, new Map());
-        if (options) {
-            this.set('options', options);
+        options = options || {};
+        this.setProp('logger', new DebugLogger((options.loggerName ? options.loggerName : 'dfi:object:') + this.constructor.name));
+        this.setProp('emitter', new EventEmitter());
+        for (let property in options) {
+            if (property != 'loggerName') {
+                this.setProp(property, options[property]);
+            }
         }
-        this.set('logger', new local_dfi_debug_logger_1.default((options.loggerName ? options.loggerName : 'dfi:collection:') + this.constructor.name));
     }
     get options() {
         return privateProperties.get(this).get('options');
@@ -17,18 +20,21 @@ class DfiObject extends EventEmitter {
     get logger() {
         return privateProperties.get(this).get('logger');
     }
-    get(key) {
+    getProp(key) {
         return privateProperties.get(this).get(key);
     }
-    set(key, value) {
+    setProp(key, value) {
         privateProperties.get(this).set(key, value);
         return this;
     }
-    has(key) {
+    hasProp(key) {
         return privateProperties.get(this).has(key);
     }
-    delete(key) {
+    removeProp(key) {
         return privateProperties.get(this).delete(key);
+    }
+    get _ee() {
+        return this.getProp('emitter');
     }
     on(event, fn, context) {
         if (event == undefined) {
@@ -37,19 +43,14 @@ class DfiObject extends EventEmitter {
         else if (typeof event != 'symbol') {
             this.logger.warn('on event not symbol "%s"', event);
         }
-        if (!this._events) {
-            this._events = { _length: 0, _names: [] };
-        }
-        if (!this._events[event]) {
-            this._events._length++;
-            let label = typeof event == 'symbol' ? Symbol.prototype.toString.call(event) : event;
-            this._events._names.push(label);
-        }
-        var ret = super.on(event, fn, context);
-        if (Array.isArray(this._events[event]) && this._events[event].length > 10) {
+        var ret = this._ee.on(event, fn, context);
+        if (this._ee.eventNames(true).length > 10) {
             this.logger.error('memory leak detected: ');
         }
         return ret;
+    }
+    get eventNames() {
+        return this._ee.eventNames();
     }
     once(event, fn, context) {
         if (event == undefined) {
@@ -58,15 +59,8 @@ class DfiObject extends EventEmitter {
         else if (typeof event != 'symbol') {
             this.logger.warn('once event not symbol "%s"', event);
         }
-        if (!this._events) {
-            this._events = { _length: 0, _names: [] };
-        }
-        if (!this._events[event]) {
-            this._events._length++;
-            this._events._names.push(Symbol.prototype.toString.call(event));
-        }
-        var ret = super.once(event, fn, context);
-        if (Array.isArray(this._events[event]) && this._events[event].length > 10) {
+        var ret = this._ee.once(event, fn, context);
+        if (this._ee.eventNames().length > 10) {
             this.logger.error('memory leak detected: ');
         }
         return ret;
@@ -79,30 +73,18 @@ class DfiObject extends EventEmitter {
         else if (typeof event != 'symbol') {
             this.logger.warn('emit event not symbol "%s"', event);
         }
-        if (!this._events || (!this._events[event] && !this._events[Events.ALL]))
+        if (!this._ee.listeners(event, true) && !this._ee.listeners(DfiObject.events.ALL, true))
             return false;
-        if (this._events[Events.ALL]) {
-            if (this._events[event]) {
-                ret = super.emit.apply(this, arguments);
+        if (this._ee.listeners(DfiObject.events.ALL, true)) {
+            if (this._ee.listeners(event, true)) {
+                this._ee.emit.apply(this._ee, arguments);
             }
             let args = Array.prototype.slice.call(arguments);
             args.unshift(Events.ALL);
-            ret = super.emit.apply(this, args);
+            ret = this._ee.emit.apply(this._ee, args);
         }
         else {
-            ret = super.emit.apply(this, arguments);
-        }
-        if (!this._events[event]) {
-            if (this._events._length) {
-                let eName = Symbol.prototype.toString.call(event);
-                if (this._events._names) {
-                    let index = this._events._names.indexOf(eName);
-                    if (index !== -1) {
-                        this._events._length--;
-                        this._events._names.splice(index, 1);
-                    }
-                }
-            }
+            ret = this._ee.emit.apply(this._ee, arguments);
         }
         return ret;
     }
@@ -113,29 +95,13 @@ class DfiObject extends EventEmitter {
         else if (typeof event != 'symbol') {
             this.logger.warn('off event not symbol "%s"', event);
         }
-        if (!this._events[event]) {
+        if (!this._ee.eventNames(true)) {
             return;
         }
-        let ret = super.off(event, fn, context, once);
-        if (!this._events[event]) {
-            if (this._events._length) {
-                let eName;
-                if (typeof event == "symbol") {
-                    eName = Symbol.prototype.toString.call(event);
-                }
-                else {
-                    eName = event;
-                }
-                if (this._events._names) {
-                    let index = this._events._names.indexOf(eName);
-                    if (index !== -1) {
-                        this._events._length--;
-                        this._events._names.splice(index, 1);
-                    }
-                }
-            }
-        }
-        return ret;
+        return this._ee.removeListener(event, fn, context, once);
+    }
+    removeAllListeners(event) {
+        return this._ee.removeAllListeners(event);
     }
     destroy() {
         this.emit(DfiObject.events.DESTROY);
@@ -147,14 +113,25 @@ class DfiObject extends EventEmitter {
     __getProp() {
         return privateProperties.get(this);
     }
+    toPlain() {
+        let prop = {};
+        let p = this.__getProp();
+        if (p) {
+            p.forEach((value, name) => {
+                if (name !== 'attributes') {
+                    prop[name] = value;
+                }
+            });
+        }
+        return prop;
+    }
     static get events() {
         return Events;
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = DfiObject;
-const Events = Object.assign(Object.assign({}, DfiObject.events), {
+const Events = Object.assign({}, {
     ALL: Symbol(DfiObject.prototype.constructor.name + ':all'),
     DESTROY: Symbol(DfiObject.prototype.constructor.name + ':destroy')
 });
+module.exports = DfiObject;
 //# sourceMappingURL=dfiObject.js.map
