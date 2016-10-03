@@ -11,6 +11,7 @@ var ModelUniqueId = (function () {
 abstract class DfiModel extends DfiObject {
 
     attributes: Map<any,any>;
+    static map: Map<string,string>;
 
     constructor(attributes: Object, options: IDfiBaseModelConfig) {
         options = options || {};
@@ -21,15 +22,18 @@ abstract class DfiModel extends DfiObject {
         super(options);
 
         this.setProp('attributes', new Map());
-        for (let attribute in attributes) {
-            this.set(attribute, attributes[attribute]);
-        }
 
         if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
             this.setProp('id', this.get(this.getProp('idAttribute')));
         } else {
             this.setProp('id', options.loggerName + ModelUniqueId());
         }
+        this._getAttributeMap(attributes).forEach((target, source)=> {
+            if (attributes.hasOwnProperty(source)) {
+                this.set(target, attributes[source], true);
+            }
+        });
+
         this.stampLastUpdate();
     }
 
@@ -120,6 +124,19 @@ abstract class DfiModel extends DfiObject {
         });
         return {attr: attr, prop: prop};
     }
+
+    private _getAttributeMap(attributes: Object): Map<string,string> {
+        if (this.constructor.map) {
+            return this.constructor.map
+        } else {
+            let result = new Map();
+            let keys = Object.keys(attributes);
+            for (let i = 0, length = keys.length; i < length; i++) {
+                result.set(keys[i], keys[i]);
+            }
+            return result;
+        }
+    }
 }
 
 export =  DfiModel;
@@ -132,3 +149,5 @@ const Events: IDfiBaseModelEvents = Object.assign(
         UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
     }
 );
+
+
