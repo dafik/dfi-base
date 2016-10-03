@@ -1,9 +1,10 @@
 import DfiObject = require("./dfiObject");
 import {IDfiBaseCollectionEvents, IDfiBaseCollectionConfig} from "./dfiInterfaces";
 import DfiModel = require("./dfiModel");
+import DfiEventObject = require("./dfiEventObject");
 
 
-abstract class DfiCollection extends DfiObject {
+abstract class DfiCollection extends DfiEventObject {
 
     constructor(options: IDfiBaseCollectionConfig) {
 
@@ -39,7 +40,7 @@ abstract class DfiCollection extends DfiObject {
     add<T extends DfiModel>(element: T): Map<any,any> {
         let res = this.getProp('collection').set(element.id, element);
 
-        element.on(DfiObject.events.ALL, this._onMemberAll, this);
+        element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
 
         this.emit(DfiCollection.events.ADD, element, this.getProp('collection'));
         this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, 1);
@@ -54,7 +55,7 @@ abstract class DfiCollection extends DfiObject {
         let res = false;
         if (element) {
             res = this.getProp('collection').delete(id);
-            element.on(DfiObject.events.ALL, this._onMemberAll, this);
+            element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
 
             this.emit(DfiCollection.events.DELETE, element, this.getProp('collection'));
             this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, -1);
@@ -125,9 +126,9 @@ abstract class DfiCollection extends DfiObject {
                 handlers.forEach((handler)=> {
                     handler.f.apply(handler.t, args);
                 })
-            } else if (this.getProp('proxyCallbacks').has(DfiObject.events.ALL)) {
+            } else if (this.getProp('proxyCallbacks').has(DfiEventObject.events.ALL)) {
                 let args = Array.prototype.slice.call(arguments);
-                let handlers = this.getProp('proxyCallbacks').get(DfiObject.events.ALL);
+                let handlers = this.getProp('proxyCallbacks').get(DfiEventObject.events.ALL);
                 handlers.forEach((handler)=> {
                     handler.c.apply(handler.t, args);
                 })
@@ -182,11 +183,11 @@ export =  DfiCollection;
 
 
 const Events: IDfiBaseCollectionEvents = Object.assign(
-    Object.assign({}, DfiObject.events),
+    Object.assign({}, DfiEventObject.events),
     {
-        ADD: Symbol(DfiObject.prototype.constructor.name + ':add'),
-        DELETE: Symbol(DfiObject.prototype.constructor.name + ':delete'),
-        UPDATE: Symbol(DfiObject.prototype.constructor.name + ':update')
+        ADD: Symbol(DfiCollection.prototype.constructor.name + ':add'),
+        DELETE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
+        UPDATE: Symbol(DfiCollection.prototype.constructor.name + ':update')
     }
 );
 

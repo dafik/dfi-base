@@ -1,6 +1,6 @@
 "use strict";
-const DfiObject = require("./dfiObject");
-class DfiCollection extends DfiObject {
+const DfiEventObject = require("./dfiEventObject");
+class DfiCollection extends DfiEventObject {
     constructor(options) {
         options = options || {};
         if (!options.loggerName) {
@@ -25,7 +25,7 @@ class DfiCollection extends DfiObject {
     }
     add(element) {
         let res = this.getProp('collection').set(element.id, element);
-        element.on(DfiObject.events.ALL, this._onMemberAll, this);
+        element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
         this.emit(DfiCollection.events.ADD, element, this.getProp('collection'));
         this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, 1);
         return res;
@@ -36,7 +36,7 @@ class DfiCollection extends DfiObject {
         let res = false;
         if (element) {
             res = this.getProp('collection').delete(id);
-            element.on(DfiObject.events.ALL, this._onMemberAll, this);
+            element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
             this.emit(DfiCollection.events.DELETE, element, this.getProp('collection'));
             this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, -1);
         }
@@ -95,9 +95,9 @@ class DfiCollection extends DfiObject {
                     handler.f.apply(handler.t, args);
                 });
             }
-            else if (this.getProp('proxyCallbacks').has(DfiObject.events.ALL)) {
+            else if (this.getProp('proxyCallbacks').has(DfiEventObject.events.ALL)) {
                 let args = Array.prototype.slice.call(arguments);
-                let handlers = this.getProp('proxyCallbacks').get(DfiObject.events.ALL);
+                let handlers = this.getProp('proxyCallbacks').get(DfiEventObject.events.ALL);
                 handlers.forEach((handler) => {
                     handler.c.apply(handler.t, args);
                 });
@@ -140,10 +140,10 @@ class DfiCollection extends DfiObject {
         return Events;
     }
 }
-const Events = Object.assign(Object.assign({}, DfiObject.events), {
-    ADD: Symbol(DfiObject.prototype.constructor.name + ':add'),
-    DELETE: Symbol(DfiObject.prototype.constructor.name + ':delete'),
-    UPDATE: Symbol(DfiObject.prototype.constructor.name + ':update')
+const Events = Object.assign(Object.assign({}, DfiEventObject.events), {
+    ADD: Symbol(DfiCollection.prototype.constructor.name + ':add'),
+    DELETE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
+    UPDATE: Symbol(DfiCollection.prototype.constructor.name + ':update')
 });
 module.exports = DfiCollection;
 //# sourceMappingURL=dfiCollection.js.map

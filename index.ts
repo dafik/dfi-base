@@ -1,4 +1,5 @@
 import DfiObject= require("./src/dfiObject");
+import DfiEventObject= require("./src/dfiEventObject");
 import DfiModel = require("./src/dfiModel");
 import DfiCollection = require("./src/dfiCollection");
 import EventEmitter  = require("./src/dfiEventEmitter");
@@ -6,6 +7,7 @@ import {IDfiBaseObjectConfig, IDfiBaseModelConfig, IDfiBaseCollectionConfig, IDf
 
 export {
     DfiObject,
+    DfiEventObject,
     DfiModel,
     DfiCollection,
     EventEmitter,

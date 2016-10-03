@@ -1,5 +1,6 @@
 import DfiObject = require("./dfiObject");
 import {IDfiBaseModelEvents, IDfiBaseModelConfig} from "./dfiInterfaces";
+import DfiEventObject = require("./dfiEventObject");
 
 var ModelUniqueId = (function () {
     var nextId = 1;
@@ -8,7 +9,7 @@ var ModelUniqueId = (function () {
     }
 })();
 
-abstract class DfiModel extends DfiObject {
+abstract class DfiModel extends DfiEventObject {
 
     attributes: Map<any,any>;
     static map: Map<string,string>;
@@ -74,18 +75,19 @@ abstract class DfiModel extends DfiObject {
             }
             return this;
         }
-        if (silent != true) {
-            let old = this.get(attribute);
-            this.getProp('attributes').set(attribute, value);
-            this.stampLastUpdate();
 
+        let old = this.get(attribute);
+        if (old === value) {
+            return;
+        }
+
+        this.getProp('attributes').set(attribute, value);
+        this.stampLastUpdate();
+        if (silent != true) {
             if (old == undefined) {
                 this.emit(Events.ADD, this, attribute, value);
             }
             this.emit(Events.UPDATE, this, attribute, value, old);
-        } else {
-            this.getProp('attributes').set(attribute, value);
-            this.stampLastUpdate();
         }
         return this;
 
@@ -130,8 +132,8 @@ abstract class DfiModel extends DfiObject {
     }
 
     private _getAttributeMap(attributes: Object): Map<string,string> {
-        if (this.constructor.map) {
-            return this.constructor.map
+        if ((this.constructor as typeof DfiModel).map) {
+            return (this.constructor as typeof DfiModel).map
         } else {
             let result = new Map();
             let keys = Object.keys(attributes);
@@ -146,7 +148,7 @@ abstract class DfiModel extends DfiObject {
 export =  DfiModel;
 
 const Events: IDfiBaseModelEvents = Object.assign(
-    Object.assign({}, DfiObject.events),
+    Object.assign({}, DfiEventObject.events),
     {
         ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
         DELETE: Symbol(DfiModel.prototype.constructor.name + ':delete'),

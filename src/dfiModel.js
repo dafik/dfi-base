@@ -1,12 +1,12 @@
 "use strict";
-const DfiObject = require("./dfiObject");
+const DfiEventObject = require("./dfiEventObject");
 var ModelUniqueId = (function () {
     var nextId = 1;
     return function () {
         return nextId++;
     };
 })();
-class DfiModel extends DfiObject {
+class DfiModel extends DfiEventObject {
     constructor(attributes, options) {
         options = options || {};
         if (!options.loggerName) {
@@ -59,18 +59,17 @@ class DfiModel extends DfiObject {
             }
             return this;
         }
+        let old = this.get(attribute);
+        if (old === value) {
+            return;
+        }
+        this.getProp('attributes').set(attribute, value);
+        this.stampLastUpdate();
         if (silent != true) {
-            let old = this.get(attribute);
-            this.getProp('attributes').set(attribute, value);
-            this.stampLastUpdate();
             if (old == undefined) {
                 this.emit(Events.ADD, this, attribute, value);
             }
             this.emit(Events.UPDATE, this, attribute, value, old);
-        }
-        else {
-            this.getProp('attributes').set(attribute, value);
-            this.stampLastUpdate();
         }
         return this;
     }
@@ -119,7 +118,7 @@ class DfiModel extends DfiObject {
         }
     }
 }
-const Events = Object.assign(Object.assign({}, DfiObject.events), {
+const Events = Object.assign(Object.assign({}, DfiEventObject.events), {
     ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
     DELETE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
     UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
