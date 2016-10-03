@@ -1,5 +1,5 @@
 import DfiObject = require("./dfiObject");
-import {IDfiBaseObjectConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
+import {IDfiBaseModelEvents, IDfiBaseModelConfig} from "./dfiInterfaces";
 
 var ModelUniqueId = (function () {
     var nextId = 1;
@@ -12,7 +12,7 @@ abstract class DfiModel extends DfiObject {
 
     attributes: Map<any,any>;
 
-    constructor(attributes: Object, options: IDfiBaseObjectConfig) {
+    constructor(attributes: Object, options: IDfiBaseModelConfig) {
         options = options || {};
         if (!options.loggerName) {
             options.loggerName = 'dfi:model:'

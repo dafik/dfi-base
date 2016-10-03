@@ -7,6 +7,10 @@ export interface IDfiBaseObjectConfig extends Object {
     loggerName?: string
 }
 
+export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {
+    idAttribute?: string,
+}
+
 export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
     idField?: string,
     model?: string

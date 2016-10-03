@@ -1,8 +1,8 @@
 import DfiObject = require("./dfiObject");
-import { IDfiBaseObjectConfig, IDfiBaseModelEvents } from "./dfiInterfaces";
+import { IDfiBaseModelEvents, IDfiBaseModelConfig } from "./dfiInterfaces";
 declare abstract class DfiModel extends DfiObject {
     attributes: Map<any, any>;
-    constructor(attributes: Object, options: IDfiBaseObjectConfig);
+    constructor(attributes: Object, options: IDfiBaseModelConfig);
     readonly id: any;
     stampLastUpdate(): void;
     destroy(): void;
