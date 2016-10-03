@@ -74,14 +74,18 @@ abstract class DfiModel extends DfiObject {
             }
             return this;
         }
-        var old = this.get(attribute);
-        this.getProp('attributes').set(attribute, value);
-        this.stampLastUpdate();
         if (silent != true) {
+            let old = this.get(attribute);
+            this.getProp('attributes').set(attribute, value);
+            this.stampLastUpdate();
+
             if (old == undefined) {
                 this.emit(Events.ADD, this, attribute, value);
             }
             this.emit(Events.UPDATE, this, attribute, value, old);
+        } else {
+            this.getProp('attributes').set(attribute, value);
+            this.stampLastUpdate();
         }
         return this;
 
