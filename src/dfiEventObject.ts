@@ -1,6 +1,6 @@
 import DebugLogger = require("local-dfi-debug-logger/debugLogger");
 import EventEmitter = require("./dfiEventEmitter");
-import {IDfiBaseObjectConfig, IDfiBaseObjectEvents} from "./dfiInterfaces";
+import {IDfiBaseObjectConfig, IDfiBaseObjectEvents, TEventName} from "./dfiInterfaces";
 import DfiObject = require("./dfiObject");
 
 
@@ -17,7 +17,7 @@ abstract class DfiEventObject extends DfiObject {
     }
 
 
-    on(event: string | symbol, fn: Function, context?: any): EventEmitter {
+    on(event: TEventName, fn: Function, context?: any): EventEmitter {
         if (event == undefined) {
             throw new Error('undefined event')
         } else if (typeof event != 'symbol') {
@@ -36,7 +36,7 @@ abstract class DfiEventObject extends DfiObject {
     }
 
 
-    once(event: string | symbol, fn: Function, context?: any): EventEmitter {
+    once(event: TEventName, fn: Function, context?: any): EventEmitter {
         if (event == undefined) {
             throw new Error('undefined event')
         } else if (typeof event != 'symbol') {
@@ -52,7 +52,7 @@ abstract class DfiEventObject extends DfiObject {
     }
 
 
-    emit(event: string | symbol, ...args): boolean {
+    emit(event: TEventName, ...args): boolean {
         let ret;
 
         if (event == undefined) {
@@ -77,7 +77,7 @@ abstract class DfiEventObject extends DfiObject {
     }
 
 
-    off(event: string, fn?: Function, context?: any, once?: boolean): EventEmitter {
+    off(event: TEventName, fn?: Function, context?: any, once?: boolean): EventEmitter {
 
         if (event == undefined) {
             throw new Error('undefined event')

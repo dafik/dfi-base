@@ -29,9 +29,6 @@ class c extends index_1.DfiCollection {
 }
 class m extends index_1.DfiModel {
 }
-let o1 = new index_1.DfiObject();
-let c1 = new index_1.DfiCollection();
-let m1 = new index_1.DfiModel();
 let o2 = new o();
 let c2 = new c();
 let m2 = new m();
@@ -42,12 +39,8 @@ let fn = (model, attribute, value) => {
 m3.on(index_1.DfiModel.events.ADD, fn);
 m3.set('test', 'test');
 m3.off(index_1.DfiModel.events.ADD, fn);
-o1.destroy();
-o1.toPlain();
 o2.destroy();
-c1.destroy();
 c2.destroy();
-m1.destroy();
 m2.destroy();
 m3.destroy();
 let x1 = process._getActiveHandles();

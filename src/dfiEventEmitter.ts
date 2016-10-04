@@ -1,4 +1,5 @@
 'use strict';
+import {TEventName} from "./dfiInterfaces";
 
 let has = Object.prototype.hasOwnProperty;
 
@@ -43,7 +44,7 @@ class EventEmitter {
      * Return an array listing the events for which the emitter has registered
      * listeners.
      */
-    eventNames(exists?: boolean): Array<string|symbol> {
+    eventNames(exists?: boolean): Array<TEventName> {
         let events = this._events,
             names = [],
             name;
@@ -73,7 +74,7 @@ class EventEmitter {
      * @param {Boolean} exists We only need to know if there are listeners.
      * @returns {Array|Boolean}
      */
-    listeners(event?: symbol | string, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
+    listeners(event?: TEventName, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
         let available = this._events && this._events[event];
 
         if (exists) return !!available;
@@ -104,7 +105,7 @@ class EventEmitter {
      * @returns {Boolean} Indication if we've emitted an event.
      * @api public
      */
-    emit(event: symbol | string, a1: any, a2: any, a3: any, a4: any, a5: any, ...args: any[]): boolean {
+    emit(event: TEventName, a1: any, a2: any, a3: any, a4: any, a5: any, ...args: any[]): boolean {
         if (!this._events || !this._events[event]) return false;
 
         let listeners = this._events[event], len = arguments.length, args_, i;
@@ -169,7 +170,7 @@ class EventEmitter {
      * @param {*} [context=this] The context of the function.
      * @api public
      */
-    on(event: symbol | string, fn: Function, context?: any): this {
+    on(event: TEventName, fn: Function, context?: any): this {
         let listener = new EE(fn, context || this);
 
         if (!this._events) {
@@ -195,7 +196,7 @@ class EventEmitter {
      * @param {*} [context=this] The context of the function.
      * @api public
      */
-    once(event: symbol | string, fn: Function, context?: any): EventEmitter {
+    once(event: TEventName, fn: Function, context?: any): EventEmitter {
         let listener = new EE(fn, context || this, true);
         if (!this._events) this._events = Object.create(null);
         if (!this._events[event]) this._events[event] = listener;
@@ -218,7 +219,7 @@ class EventEmitter {
      * @param {Boolean} once Only remove once listeners.
      * @api public
      */
-    removeListener(event: symbol | string, fn?: Function, context?: any, once?: boolean) {
+    removeListener(event: TEventName, fn?: Function, context?: any, once?: boolean) {
         if (!this._events || !this._events[event]) return this;
 
         let listeners = this._events[event], events = [];
@@ -262,7 +263,7 @@ class EventEmitter {
      *
      * @param  event The event want to remove all listeners for.
      */
-    removeAllListeners(event?: symbol | string): this {
+    removeAllListeners(event?: TEventName): this {
         if (!this._events) return this;
 
         if (event) delete this._events[event];

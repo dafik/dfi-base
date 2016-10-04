@@ -38,9 +38,6 @@ class m extends DfiModel {
 
 }
 
-let o1 = new DfiObject();
-let c1 = new DfiCollection();
-let m1 = new DfiModel();
 
 let o2 = new o();
 let c2 = new c();
@@ -57,13 +54,8 @@ m3.set('test', 'test');
 
 m3.off(DfiModel.events.ADD, fn);
 
-
-o1.destroy();
-o1.toPlain();
 o2.destroy();
-c1.destroy();
 c2.destroy();
-m1.destroy();
 m2.destroy();
 m3.destroy();
 

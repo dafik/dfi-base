@@ -14,7 +14,7 @@ abstract class DfiModel extends DfiEventObject {
     attributes: Map<any,any>;
     static map: Map<string,string>;
 
-    constructor(attributes: Object, options: IDfiBaseModelConfig) {
+    constructor(attributes?: Object, options?: IDfiBaseModelConfig) {
         options = options || {};
         if (!options.loggerName) {
             options.loggerName = 'dfi:model:'

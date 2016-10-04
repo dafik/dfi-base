@@ -27,3 +27,5 @@ export interface IDfiBaseCollectionEvents extends IDfiBaseObjectEvents {
     REMOVE: symbol,
     UPDATE: symbol
 }
+
+export type TEventName = string | symbol;

@@ -1,12 +1,12 @@
 import DfiObject = require("./dfiObject");
-import {IDfiBaseCollectionEvents, IDfiBaseCollectionConfig} from "./dfiInterfaces";
+import {IDfiBaseCollectionEvents, IDfiBaseCollectionConfig, TEventName} from "./dfiInterfaces";
 import DfiModel = require("./dfiModel");
 import DfiEventObject = require("./dfiEventObject");
 
 
 abstract class DfiCollection extends DfiEventObject {
 
-    constructor(options: IDfiBaseCollectionConfig) {
+    constructor(options?: IDfiBaseCollectionConfig) {
 
         options = options || {};
         if (!options.loggerName) {
@@ -136,7 +136,7 @@ abstract class DfiCollection extends DfiEventObject {
         }
     }
 
-    proxyOn(event: string | symbol, fn: Function, context?: any) {
+    proxyOn(event: TEventName, fn: Function, context?: any) {
 
         let proxyCallbacks = this.getProp('proxyCallbacks');
         if (!proxyCallbacks.has(event)) {
@@ -151,7 +151,7 @@ abstract class DfiCollection extends DfiEventObject {
 
     }
 
-    proxyOff(event: string | symbol, fn: Function, context?: any): void {
+    proxyOff(event: TEventName, fn: Function, context?: any): void {
         let handlers = this.getProp('proxyCallbacks').get(event);
         if (handlers) {
             handlers.forEach((handler)=> {
