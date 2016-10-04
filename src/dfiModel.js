@@ -33,6 +33,9 @@ class DfiModel extends DfiEventObject {
     get id() {
         return this.getProp('id');
     }
+    get lastUpdate() {
+        return this.getProp('lastUpdate');
+    }
     stampLastUpdate() {
         this.setProp('lastUpdate', Date.now());
     }
