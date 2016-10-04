@@ -37,7 +37,7 @@ class DfiCollection extends DfiEventObject {
         if (element) {
             res = this.getProp('collection').delete(id);
             element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
-            this.emit(DfiCollection.events.DELETE, element, this.getProp('collection'));
+            this.emit(DfiCollection.events.REMOVE, element, this.getProp('collection'));
             this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, -1);
         }
         return res;
@@ -55,8 +55,8 @@ class DfiCollection extends DfiEventObject {
         this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), null, 0);
         return this;
     }
-    forEach(callback, thisArg) {
-        return this.getProp('collection').forEach(callback, thisArg);
+    forEach(Fn, thisArg) {
+        return this.getProp('collection').forEach(Fn, thisArg);
     }
     toArray() {
         var entries = [];
@@ -142,7 +142,7 @@ class DfiCollection extends DfiEventObject {
 }
 const Events = Object.assign(Object.assign({}, DfiEventObject.events), {
     ADD: Symbol(DfiCollection.prototype.constructor.name + ':add'),
-    DELETE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
+    REMOVE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
     UPDATE: Symbol(DfiCollection.prototype.constructor.name + ':update')
 });
 module.exports = DfiCollection;

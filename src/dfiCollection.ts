@@ -57,7 +57,7 @@ abstract class DfiCollection extends DfiEventObject {
             res = this.getProp('collection').delete(id);
             element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
 
-            this.emit(DfiCollection.events.DELETE, element, this.getProp('collection'));
+            this.emit(DfiCollection.events.REMOVE, element, this.getProp('collection'));
             this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, -1);
         }
         return res
@@ -79,8 +79,8 @@ abstract class DfiCollection extends DfiEventObject {
         return this;
     }
 
-    forEach(callback, thisArg): void {
-        return this.getProp('collection').forEach(callback, thisArg);
+    forEach<K,V>(Fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void {
+        return this.getProp('collection').forEach(Fn, thisArg);
     }
 
     toArray<T extends DfiModel>(): Array<T> {
@@ -186,7 +186,7 @@ const Events: IDfiBaseCollectionEvents = Object.assign(
     Object.assign({}, DfiEventObject.events),
     {
         ADD: Symbol(DfiCollection.prototype.constructor.name + ':add'),
-        DELETE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
+        REMOVE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
         UPDATE: Symbol(DfiCollection.prototype.constructor.name + ':update')
     }
 );

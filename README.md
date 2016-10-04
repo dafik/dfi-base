@@ -1,6 +1,6 @@
 base dfi files
 
 
-object event emiter with priv properties
+object event emitter with private properties
 model with attributes
 collection

@@ -1,8 +1,4 @@
-/.idea/
-/*.iml
-/node_modules/
-/tmp/
-/logs/
-/examples/
-/src/event-classification.js
-/npm-debug.log
+.idea/
+*.iml
+node_modules/
+npm-debug.log

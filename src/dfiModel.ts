@@ -97,7 +97,7 @@ abstract class DfiModel extends DfiEventObject {
         let value = this.getProp('attributes').get(attribute);
         let ret = this.getProp('attributes').delete(attribute);
 
-        this.emit(Events.DELETE, this, attribute, value);
+        this.emit(Events.REMOVE, this, attribute, value);
         this.emit(Events.UPDATE, this, attribute, value);
         return ret;
     }
@@ -151,7 +151,7 @@ const Events: IDfiBaseModelEvents = Object.assign(
     Object.assign({}, DfiEventObject.events),
     {
         ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
-        DELETE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
+        REMOVE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
         UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
     }
 );

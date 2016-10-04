@@ -18,12 +18,12 @@ export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
 
 export interface IDfiBaseModelEvents extends IDfiBaseObjectEvents {
     ADD: symbol,
-    DELETE: symbol,
+    REMOVE: symbol,
     UPDATE: symbol
 }
 
 export interface IDfiBaseCollectionEvents extends IDfiBaseObjectEvents {
     ADD: symbol,
-    DELETE: symbol,
+    REMOVE: symbol,
     UPDATE: symbol
 }

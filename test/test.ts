@@ -50,7 +50,7 @@ let m2 = new m();
 let m3 = new m({a: 1, b: 2});
 let fn = (model, attribute, value)=> {
     let x = 1;
-}
+};
 
 m3.on(DfiModel.events.ADD, fn);
 m3.set('test', 'test');
