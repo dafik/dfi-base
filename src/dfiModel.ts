@@ -11,7 +11,6 @@ var ModelUniqueId = (function () {
 
 abstract class DfiModel extends DfiEventObject {
 
-    attributes: Map<any,any>;
     static map: Map<string,string>;
 
     constructor(attributes?: IDfiBaseModelAttribs, options?: IDfiBaseModelConfig) {
