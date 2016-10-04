@@ -1,5 +1,5 @@
 import DfiObject = require("./dfiObject");
-import {IDfiBaseModelEvents, IDfiBaseModelConfig} from "./dfiInterfaces";
+import {IDfiBaseModelEvents, IDfiBaseModelConfig, IDfiBaseModelAttribs} from "./dfiInterfaces";
 import DfiEventObject = require("./dfiEventObject");
 
 var ModelUniqueId = (function () {
@@ -14,7 +14,7 @@ abstract class DfiModel extends DfiEventObject {
     attributes: Map<any,any>;
     static map: Map<string,string>;
 
-    constructor(attributes?: Object, options?: IDfiBaseModelConfig) {
+    constructor(attributes?: IDfiBaseModelAttribs, options?: IDfiBaseModelConfig) {
         options = options || {};
         if (!options.loggerName) {
             options.loggerName = 'dfi:model:'
@@ -26,6 +26,8 @@ abstract class DfiModel extends DfiEventObject {
 
         if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
             this.setProp('id', this.get(this.getProp('idAttribute')));
+        } else if (Object.hasOwnProperty.call(attributes, 'id')) {
+            this.setProp('id', attributes.id);
         } else {
             this.setProp('id', options.loggerName + ModelUniqueId());
         }

@@ -1,8 +1,4 @@
-export interface IDfiBaseObjectEvents extends Object {
-    ALL: symbol
-    DESTROY: symbol
-}
-
+//config
 export interface IDfiBaseObjectConfig extends Object {
     loggerName?: string
 }
@@ -16,6 +12,13 @@ export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
     model?: string
 }
 
+//events
+
+export interface IDfiBaseObjectEvents extends Object {
+    ALL: symbol
+    DESTROY: symbol
+}
+
 export interface IDfiBaseModelEvents extends IDfiBaseObjectEvents {
     ADD: symbol,
     REMOVE: symbol,
@@ -27,5 +30,14 @@ export interface IDfiBaseCollectionEvents extends IDfiBaseObjectEvents {
     REMOVE: symbol,
     UPDATE: symbol
 }
+//arguments
+
+export interface IDfiBaseModelAttribs extends Object {
+    id?: any
+}
+
+
+//types
 
 export type TEventName = string | symbol;
+

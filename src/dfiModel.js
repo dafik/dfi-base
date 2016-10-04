@@ -17,6 +17,9 @@ class DfiModel extends DfiEventObject {
         if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
             this.setProp('id', this.get(this.getProp('idAttribute')));
         }
+        else if (Object.hasOwnProperty.call(attributes, 'id')) {
+            this.setProp('id', attributes.id);
+        }
         else {
             this.setProp('id', options.loggerName + ModelUniqueId());
         }
