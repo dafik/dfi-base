@@ -1,6 +1,6 @@
 import DebugLogger = require("local-dfi-debug-logger/debugLogger");
 import EventEmitter = require("./dfiEventEmitter");
-import {IDfiBaseObjectConfig, IDfiBaseObjectEvents, TEventName} from "./dfiInterfaces";
+import {IDfiBaseObjectConfig, IDfiBaseEventObjectEvents, TEventName} from "./dfiInterfaces";
 import DfiObject = require("./dfiObject");
 
 
@@ -104,13 +104,13 @@ abstract class DfiEventObject extends DfiObject {
         super.destroy();
     }
 
-    static get events(): IDfiBaseObjectEvents {
+    static get events(): IDfiBaseEventObjectEvents {
         return Events;
     }
 }
 
 
-const Events: IDfiBaseObjectEvents = Object.assign(
+const Events: IDfiBaseEventObjectEvents = Object.assign(
     {},
     {
         ALL: Symbol(DfiEventObject.prototype.constructor.name + ':all'),

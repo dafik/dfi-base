@@ -3,7 +3,7 @@ import DfiEventObject= require("./src/dfiEventObject");
 import DfiModel = require("./src/dfiModel");
 import DfiCollection = require("./src/dfiCollection");
 import EventEmitter  = require("./src/dfiEventEmitter");
-import {IDfiBaseObjectConfig, IDfiBaseModelConfig, IDfiBaseCollectionConfig, IDfiBaseObjectEvents, IDfiBaseModelEvents, IDfiBaseCollectionEvents} from "./src/dfiInterfaces";
+import {IDfiBaseObjectConfig, IDfiBaseModelConfig, IDfiBaseCollectionConfig, IDfiBaseEventObjectEvents, IDfiBaseModelEvents, IDfiBaseCollectionEvents} from "./src/dfiInterfaces";
 
 export {
     DfiObject,
@@ -16,7 +16,7 @@ export {
     IDfiBaseModelConfig,
     IDfiBaseCollectionConfig,
 
-    IDfiBaseObjectEvents,
+    IDfiBaseEventObjectEvents,
     IDfiBaseModelEvents,
     IDfiBaseCollectionEvents
 };

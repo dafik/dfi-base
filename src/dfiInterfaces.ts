@@ -14,18 +14,18 @@ export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
 
 //events
 
-export interface IDfiBaseObjectEvents extends Object {
+export interface IDfiBaseEventObjectEvents extends Object {
     ALL: symbol
     DESTROY: symbol
 }
 
-export interface IDfiBaseModelEvents extends IDfiBaseObjectEvents {
+export interface IDfiBaseModelEvents extends IDfiBaseEventObjectEvents {
     ADD: symbol,
     REMOVE: symbol,
     UPDATE: symbol
 }
 
-export interface IDfiBaseCollectionEvents extends IDfiBaseObjectEvents {
+export interface IDfiBaseCollectionEvents extends IDfiBaseEventObjectEvents {
     ADD: symbol,
     REMOVE: symbol,
     UPDATE: symbol
