@@ -1,43 +1,41 @@
-//config
+// config
 export interface IDfiBaseObjectConfig extends Object {
-    loggerName?: string
+    loggerName?: string;
 }
 
 export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {
-    idAttribute?: string,
+    idAttribute?: string;
 }
 
 export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
-    idField?: string,
-    model?: string
+    idField?: string;
+    model?: Function;
 }
 
-//events
+// events
 
 export interface IDfiBaseEventObjectEvents extends Object {
-    ALL: symbol
-    DESTROY: symbol
+    ALL: symbol;
+    DESTROY: symbol;
 }
 
 export interface IDfiBaseModelEvents extends IDfiBaseEventObjectEvents {
-    ADD: symbol,
-    REMOVE: symbol,
-    UPDATE: symbol
+    ADD: symbol;
+    REMOVE: symbol;
+    UPDATE: symbol;
 }
 
 export interface IDfiBaseCollectionEvents extends IDfiBaseEventObjectEvents {
-    ADD: symbol,
-    REMOVE: symbol,
-    UPDATE: symbol
+    ADD: symbol;
+    REMOVE: symbol;
+    UPDATE: symbol;
 }
-//arguments
+// arguments
 
 export interface IDfiBaseModelAttribs extends Object {
-    id?: any
+    id?: any;
 }
 
-
-//types
+// types
 
 export type TEventName = string | symbol;
-

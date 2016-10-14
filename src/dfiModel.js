@@ -1,62 +1,97 @@
 "use strict";
 const DfiEventObject = require("./dfiEventObject");
-var ModelUniqueId = (function () {
-    var nextId = 1;
-    return function () {
+const MODEL_UNIQUE_ID = (() => {
+    let nextId = 1;
+    return () => {
         return nextId++;
     };
 })();
 class DfiModel extends DfiEventObject {
-    constructor(attributes, options) {
+    /**
+     * @param attributes
+     * @param options
+     * @param notMakeStamp
+     */
+    constructor(attributes, options, notMakeStamp) {
         options = options || {};
         if (!options.loggerName) {
-            options.loggerName = 'dfi:model:';
+            options.loggerName = "dfi:model:";
         }
         super(options);
-        this.setProp('attributes', new Map());
-        if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
-            this.setProp('id', this.get(this.getProp('idAttribute')));
-        }
-        else if (Object.hasOwnProperty.call(attributes, 'id')) {
-            this.setProp('id', attributes.id);
-        }
-        else {
-            this.setProp('id', options.loggerName + ModelUniqueId());
-        }
+        this.setProp("attributes", new Map());
         this._getAttributeMap(attributes).forEach((target, source) => {
             if (attributes.hasOwnProperty(source)) {
                 this.set(target, attributes[source], true);
             }
         });
-        this.stampLastUpdate();
+        if (this.hasProp("idAttribute") && this.has(this.getProp("idAttribute"))) {
+            this.setProp("id", this.get(this.getProp("idAttribute")));
+        }
+        else if (this.has("id")) {
+            this.setProp("id", this.get("id"));
+        }
+        else if (Object.hasOwnProperty.call(attributes, "id")) {
+            this.setProp("id", attributes.id);
+        }
+        else {
+            this.setProp("id", options.loggerName + MODEL_UNIQUE_ID());
+        }
+        if (!notMakeStamp) {
+            this.stampLastUpdate();
+        }
     }
     get id() {
-        return this.getProp('id');
+        return this.getProp("id");
     }
     get lastUpdate() {
-        return this.getProp('lastUpdate');
+        return this.getProp("lastUpdate");
     }
-    stampLastUpdate() {
-        this.setProp('lastUpdate', Date.now());
+    stampLastUpdate(time) {
+        if (time) {
+            this.setProp("lastUpdate", time);
+        }
+        else {
+            this.setProp("lastUpdate", Date.now());
+        }
+    }
+    toJSON() {
+        let attr = { id: this.id };
+        this.getProp("attributes").forEach((value, name) => {
+            attr[name] = value;
+        });
+        return attr;
+    }
+    toPlain() {
+        let attr = {};
+        this.getProp("attributes").forEach((value, name) => {
+            attr[name] = value;
+        });
+        let prop = {};
+        this.__getProp().forEach((value, name) => {
+            if (name !== "attributes") {
+                prop[name] = value;
+            }
+        });
+        return { attr, prop };
     }
     destroy() {
-        this.getProp('attributes').clear();
+        this.getProp("attributes").clear();
         super.destroy();
         this.destroyed = true;
     }
     get(attribute) {
-        if (this.getProp('attributes')) {
-            if (this.getProp('attributes').has(attribute)) {
-                return this.getProp('attributes').get(attribute);
+        if (this.getProp("attributes")) {
+            if (this.getProp("attributes").has(attribute)) {
+                return this.getProp("attributes").get(attribute);
             }
         }
         return undefined;
     }
     has(attribute) {
-        return this.getProp('attributes').has(attribute);
+        return this.getProp("attributes").has(attribute);
     }
     set(attribute, value, silent) {
-        if (typeof attribute == 'object') {
+        if (typeof attribute === "object") {
             silent = value;
             for (let attr in attribute) {
                 if (attribute.hasOwnProperty(attr)) {
@@ -69,46 +104,25 @@ class DfiModel extends DfiEventObject {
         if (old === value) {
             return;
         }
-        this.getProp('attributes').set(attribute, value);
+        this.getProp("attributes").set(attribute, value);
         this.stampLastUpdate();
-        if (silent != true) {
-            if (old == undefined) {
-                this.emit(Events.ADD, this, attribute, value);
+        if (silent !== true) {
+            if (old === undefined) {
+                this.emit(EVENTS.ADD, this, attribute, value);
             }
-            this.emit(Events.UPDATE, this, attribute, value, old);
+            this.emit(EVENTS.UPDATE, this, attribute, value, old);
         }
         return this;
     }
     remove(attribute) {
-        let value = this.getProp('attributes').get(attribute);
-        let ret = this.getProp('attributes').delete(attribute);
-        this.emit(Events.REMOVE, this, attribute, value);
-        this.emit(Events.UPDATE, this, attribute, value);
+        let value = this.getProp("attributes").get(attribute);
+        let ret = this.getProp("attributes").delete(attribute);
+        this.emit(EVENTS.REMOVE, this, attribute, value);
+        this.emit(EVENTS.UPDATE, this, attribute, value);
         return ret;
     }
     static get events() {
-        return Events;
-    }
-    toJSON() {
-        let attr = {};
-        this.getProp('attributes').forEach((value, name) => {
-            attr[name] = value;
-        });
-        attr['id'] = this.id;
-        return attr;
-    }
-    toPlain() {
-        let attr = {};
-        this.getProp('attributes').forEach((value, name) => {
-            attr[name] = value;
-        });
-        let prop = {};
-        this.__getProp().forEach((value, name) => {
-            if (name !== 'attributes') {
-                prop[name] = value;
-            }
-        });
-        return { attr: attr, prop: prop };
+        return EVENTS;
     }
     _getAttributeMap(attributes) {
         if (this.constructor.map) {
@@ -124,10 +138,10 @@ class DfiModel extends DfiEventObject {
         }
     }
 }
-const Events = Object.assign(Object.assign({}, DfiEventObject.events), {
-    ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
-    REMOVE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
-    UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
+const EVENTS = Object.assign(Object.assign({}, DfiEventObject.events), {
+    ADD: Symbol(DfiModel.prototype.constructor.name + ":add"),
+    REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"),
+    UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update")
 });
 module.exports = DfiModel;
 //# sourceMappingURL=dfiModel.js.map
