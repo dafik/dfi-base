@@ -18,6 +18,9 @@ class DfiCollection extends DfiEventObject {
             this.setProp(ID_FIELD, options.idField);
         }
         if (options.model) {
+            if (typeof options.model !== "function") {
+                throw new Error("model prototype is not function");
+            }
             this.setProp(MODEL, options.model);
         }
     }
@@ -58,12 +61,15 @@ class DfiCollection extends DfiEventObject {
         return res;
     }
     remove(element) {
-        let id = element instanceof this.getProp(MODEL) ? element.id : element;
+        if (!element) {
+            this.logger.error("remove call without argument");
+        }
+        let id = (element instanceof this.getProp(MODEL)) ? element.id : element;
         element = this.getProp(COLLECTION).get(id);
         let res = false;
         if (element) {
             res = this.getProp(COLLECTION).delete(id);
-            element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
+            element.off(DfiEventObject.events.ALL, this._onMemberAll, this);
             this.emit(DfiCollection.events.REMOVE, element, this.getProp(COLLECTION));
             this.emit(DfiCollection.events.UPDATE, this.getProp(COLLECTION), element, -1);
         }
@@ -122,22 +128,27 @@ class DfiCollection extends DfiEventObject {
         });
     }
     _onMemberAll(event) {
-        if (this.getProp(PROXY_CALLBACKS).size > 0) {
-            if (this.getProp(PROXY_CALLBACKS).has(event)) {
-                let args = Array.prototype.slice.call(arguments);
-                args.shift();
-                let handlers = this.getProp(PROXY_CALLBACKS).get(event);
-                handlers.forEach((handler) => {
-                    handler.f.apply(handler.t, args);
-                });
+        try {
+            if (this.getProp(PROXY_CALLBACKS).size > 0) {
+                if (this.getProp(PROXY_CALLBACKS).has(event)) {
+                    let args = Array.prototype.slice.call(arguments);
+                    args.shift();
+                    let handlers = this.getProp(PROXY_CALLBACKS).get(event);
+                    handlers.forEach((handler) => {
+                        handler.f.apply(handler.t, args);
+                    });
+                }
+                else if (this.getProp(PROXY_CALLBACKS).has(DfiEventObject.events.ALL)) {
+                    let args = Array.prototype.slice.call(arguments);
+                    let handlers = this.getProp(PROXY_CALLBACKS).get(DfiEventObject.events.ALL);
+                    handlers.forEach((handler) => {
+                        handler.c.apply(handler.t, args);
+                    });
+                }
             }
-            else if (this.getProp(PROXY_CALLBACKS).has(DfiEventObject.events.ALL)) {
-                let args = Array.prototype.slice.call(arguments);
-                let handlers = this.getProp(PROXY_CALLBACKS).get(DfiEventObject.events.ALL);
-                handlers.forEach((handler) => {
-                    handler.c.apply(handler.t, args);
-                });
-            }
+        }
+        catch (e) {
+            let x = 1;
         }
     }
 }
