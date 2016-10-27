@@ -12,4 +12,5 @@
   "dependencies": {
     "local-dfi-debug-logger": "*"
   }
+  "types":""
 }

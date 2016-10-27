@@ -41,3 +41,13 @@ export interface IDfiBaseModelAttribs extends Object {
 
 export type TEventName = string | symbol;
 
+
+export interface IDfiCallbackError extends Function {
+    (error?: Error): void;
+    fired?: boolean;
+}
+
+export interface IDfiCallbackResult extends IDfiCallbackError {
+    (error?: Error, result?): void;
+    fired?: boolean;
+}
