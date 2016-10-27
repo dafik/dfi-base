@@ -1,36 +1,52 @@
-import DfiObject = require("./dfiObject");
-import {IDfiBaseModelEvents, IDfiBaseModelConfig, IDfiBaseModelAttribs} from "./dfiInterfaces";
+import {IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
 import DfiEventObject = require("./dfiEventObject");
 
-var ModelUniqueId = (function () {
-    var nextId = 1;
-    return function () {
+const modelUniqueId = (() => {
+    let nextId = 1;
+    return () => {
         return nextId++;
-    }
+    };
 })();
+
+const PROP_ATTRIBUTES = "attributes";
+const PROP_ID_ATTRIBUTE = "idAttribute";
+const PROP_ID = "id";
+const PROP_LAST_UPDATE = "lastUpdate";
 
 abstract class DfiModel extends DfiEventObject {
 
-    static map: Map<string,string>;
+    static get events(): IDfiBaseModelEvents {
+        return EVENTS;
+    }
+
+    protected static map: Map<string, string>;
+
+    get id(): any {
+        return this.getProp(PROP_ID);
+    }
+
+    get lastUpdate(): number {
+        return this.getProp(PROP_LAST_UPDATE);
+    }
 
     constructor(attributes?: IDfiBaseModelAttribs, options?: IDfiBaseModelConfig) {
         options = options || {};
         if (!options.loggerName) {
-            options.loggerName = 'dfi:model:'
+            options.loggerName = "dfi:model:";
         }
 
         super(options);
 
-        this.setProp('attributes', new Map());
+        this.setProp(PROP_ATTRIBUTES, new Map());
 
-        if (this.hasProp('idAttribute') && this.has(this.getProp('idAttribute'))) {
-            this.setProp('id', this.get(this.getProp('idAttribute')));
-        } else if (Object.hasOwnProperty.call(attributes, 'id')) {
-            this.setProp('id', attributes.id);
+        if (this.hasProp(PROP_ID_ATTRIBUTE) && this.has(this.getProp(PROP_ID_ATTRIBUTE))) {
+            this.setProp(PROP_ID, this.get(this.getProp(PROP_ID_ATTRIBUTE)));
+        } else if (Object.hasOwnProperty.call(attributes, PROP_ID)) {
+            this.setProp(PROP_ID, attributes.id);
         } else {
-            this.setProp('id', options.loggerName + ModelUniqueId());
+            this.setProp(PROP_ID, options.loggerName + modelUniqueId());
         }
-        this._getAttributeMap(attributes).forEach((target, source)=> {
+        this._getAttributeMap(attributes).forEach((target, source) => {
             if (attributes.hasOwnProperty(source)) {
                 this.set(target, attributes[source], true);
             }
@@ -39,43 +55,49 @@ abstract class DfiModel extends DfiEventObject {
         this.stampLastUpdate();
     }
 
-    get id(): any {
-        return this.getProp('id');
+    public toJSON(): Object {
+        let attr = {id: this.id};
+        this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
+            attr[name] = value;
+        });
+        return attr;
     }
 
-    get lastUpdate(): number {
-        return this.getProp('lastUpdate');
+    public toPlain(): Object {
+        let attr = {};
+        this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
+            attr[name] = value;
+        });
+
+        let prop = super.toPlain();
+        return {attr, prop};
     }
 
-    stampLastUpdate(): void {
-        this.setProp('lastUpdate', Date.now());
-    }
-
-    destroy() {
-        this.getProp('attributes').clear();
+    public destroy() {
+        this.getProp(PROP_ATTRIBUTES).clear();
         super.destroy();
         this.destroyed = true;
     }
 
-    get(attribute: string): any {
-        if (this.getProp('attributes')) {
-            if (this.getProp('attributes').has(attribute)) {
-                return this.getProp('attributes').get(attribute);
+    protected get(attribute: string): any {
+        if (this.getProp(PROP_ATTRIBUTES)) {
+            if (this.getProp(PROP_ATTRIBUTES).has(attribute)) {
+                return this.getProp(PROP_ATTRIBUTES).get(attribute);
             }
         }
         return undefined;
     }
 
-    has(attribute: string): boolean {
-        return this.getProp('attributes').has(attribute);
+    protected has(attribute: string): boolean {
+        return this.getProp(PROP_ATTRIBUTES).has(attribute);
     }
 
-    set(attribute: string | Object, value: any, silent?: boolean): this {
-        if (typeof attribute == 'object') {
+    protected set(attribute: string | Object, value: any, silent?: boolean): this {
+        if (typeof attribute === "object") {
             silent = value;
             for (let attr in attribute) {
                 if (attribute.hasOwnProperty(attr)) {
-                    this.set(attr, attribute[attr], silent)
+                    this.set(attr, attribute[attr], silent);
                 }
             }
             return this;
@@ -86,59 +108,34 @@ abstract class DfiModel extends DfiEventObject {
             return;
         }
 
-        this.getProp('attributes').set(attribute, value);
+        this.getProp(PROP_ATTRIBUTES).set(attribute, value);
         this.stampLastUpdate();
-        if (silent != true) {
-            if (old == undefined) {
-                this.emit(Events.ADD, this, attribute, value);
+        if (silent !== true) {
+            if (old === undefined) {
+                this.emit(EVENTS.ADD, this, attribute, value);
             }
-            this.emit(Events.UPDATE, this, attribute, value, old);
+            this.emit(EVENTS.UPDATE, this, attribute, value, old);
         }
         return this;
 
     }
 
-    remove(attribute) {
-        let value = this.getProp('attributes').get(attribute);
-        let ret = this.getProp('attributes').delete(attribute);
+    protected remove(attribute) {
+        let value = this.getProp(PROP_ATTRIBUTES).get(attribute);
+        let ret = this.getProp(PROP_ATTRIBUTES).delete(attribute);
 
-        this.emit(Events.REMOVE, this, attribute, value);
-        this.emit(Events.UPDATE, this, attribute, value);
+        this.emit(EVENTS.REMOVE, this, attribute, value);
+        this.emit(EVENTS.UPDATE, this, attribute, value);
         return ret;
     }
 
-    static get events(): IDfiBaseModelEvents {
-        return Events;
+    private stampLastUpdate(): void {
+        this.setProp(PROP_LAST_UPDATE, Date.now());
     }
 
-    toJSON(): Object {
-        let attr = {};
-        this.getProp('attributes').forEach((value, name) => {
-            attr[name] = value
-        });
-        attr['id'] = this.id;
-        return attr
-    }
-
-    toPlain(): Object {
-        let attr = {};
-        this.getProp('attributes').forEach((value, name) => {
-            attr[name] = value
-        });
-
-        let prop = {};
-        this.__getProp().forEach((value, name) => {
-            if (name !== 'attributes') {
-                prop[name] = value
-            }
-
-        });
-        return {attr: attr, prop: prop};
-    }
-
-    private _getAttributeMap(attributes: Object): Map<string,string> {
+    private _getAttributeMap(attributes: Object): Map<string, string> {
         if ((this.constructor as typeof DfiModel).map) {
-            return (this.constructor as typeof DfiModel).map
+            return (this.constructor as typeof DfiModel).map;
         } else {
             let result = new Map();
             let keys = Object.keys(attributes);
@@ -152,13 +149,11 @@ abstract class DfiModel extends DfiEventObject {
 
 export =  DfiModel;
 
-const Events: IDfiBaseModelEvents = Object.assign(
+const EVENTS: IDfiBaseModelEvents = Object.assign(
     Object.assign({}, DfiEventObject.events),
     {
-        ADD: Symbol(DfiModel.prototype.constructor.name + ':add'),
-        REMOVE: Symbol(DfiModel.prototype.constructor.name + ':delete'),
-        UPDATE: Symbol(DfiModel.prototype.constructor.name + ':update')
+        ADD: Symbol(DfiModel.prototype.constructor.name + ":add"),
+        REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"),
+        UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update")
     }
 );
-
-

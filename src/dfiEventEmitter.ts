@@ -1,4 +1,3 @@
-'use strict';
 import {TEventName} from "./dfiInterfaces";
 
 let has = Object.prototype.hasOwnProperty;
@@ -24,11 +23,17 @@ class EE {
 }
 declare class NullProto {
     private "constructor": NullProto;
+    // noinspection TsLint
     private toString: any;
+    // noinspection TsLint
     private toLocaleString: any;
+    // noinspection TsLint
     private valueOf: any;
+    // noinspection TsLint
     private hasOwnProperty: any;
+    // noinspection TsLint
     private isPrototypeOf: any;
+    // noinspection TsLint
     private propertyIsEnumerable: any;
 }
 
@@ -44,21 +49,26 @@ class EventEmitter {
      * Return an array listing the events for which the emitter has registered
      * listeners.
      */
-    eventNames(exists?: boolean): Array<TEventName> {
-        let events = this._events,
-            names = [],
-            name;
+    public eventNames(exists?: boolean): Array<TEventName> {
+        let events = this._events;
+        let names = [];
+        let name;
 
-        if (!events) return names;
+        if (!events) {
+            return names;
+        }
+
         for (name in events) {
-            if (has.call(events, name)) names.push(name);
+            if (has.call(events, name)) {
+                names.push(name);
+            }
         }
         if (Object.getOwnPropertySymbols) {
             let symbols = Object.getOwnPropertySymbols(events);
             if (!exists) {
-                symbols.forEach((elem, index)=> {
+                symbols.forEach((elem, index) => {
                     symbols[index] = Symbol.prototype.toString.call(elem);
-                })
+                });
             }
 
             return names.concat(symbols);
@@ -74,16 +84,22 @@ class EventEmitter {
      * @param {Boolean} exists We only need to know if there are listeners.
      * @returns {Array|Boolean}
      */
-    listeners(event?: TEventName, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
+    public    listeners(event?: TEventName, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
         let available = this._events && this._events[event];
 
-        if (exists) return !!available;
-        if (!available) return [];
-        if (available.fn) return [available.fn];
+        if (exists) {
+            return !!available;
+        }
+        if (!available) {
+            return [];
+        }
+        if (available.fn) {
+            return [available.fn];
+        }
 
-        let l = available.length,
-            ee = new Array(l),
-            i = 0;
+        let l = available.length;
+        let ee = new Array(l);
+        let i = 0;
 
         for (i; i < l; i++) {
             ee[i] = available[i].fn;
@@ -105,13 +121,20 @@ class EventEmitter {
      * @returns {Boolean} Indication if we've emitted an event.
      * @api public
      */
-    emit(event: TEventName, a1: any, a2: any, a3: any, a4: any, a5: any, ...args: any[]): boolean {
-        if (!this._events || !this._events[event]) return false;
+    public emit(event: TEventName, a1: any, a2: any, a3: any, a4: any, a5: any, ...args: any[]): boolean {
+        if (!this._events || !this._events[event]) {
+            return false;
+        }
 
-        let listeners = this._events[event], len = arguments.length, args_, i;
+        let listeners = this._events[event];
+        let len = arguments.length;
+        let args1;
+        let i;
 
-        if ('function' === typeof listeners.fn) {
-            if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
+        if ("function" === typeof listeners.fn) {
+            if (listeners.once) {
+                this.removeListener(event, listeners.fn, undefined, true);
+            }
 
             switch (len) {
                 case 1:
@@ -126,18 +149,21 @@ class EventEmitter {
                     return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
                 case 6:
                     return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
-            }
+                default:
+                    for (i = 1, args1 = new Array(len - 1); i < len; i++) {
+                        args1[i - 1] = arguments[i];
+                    }
 
-            for (i = 1, args_ = new Array(len - 1); i < len; i++) {
-                args_[i - 1] = arguments[i];
+                    listeners.fn.apply(listeners.context, args1);
             }
-
-            listeners.fn.apply(listeners.context, args_);
         } else {
-            let length = listeners.length, j;
+            let length = listeners.length;
+            let j;
 
             for (i = 0; i < length; i++) {
-                if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
+                if (listeners[i].once) {
+                    this.removeListener(event, listeners[i].fn, undefined, true);
+                }
 
                 switch (len) {
                     case 1:
@@ -150,11 +176,13 @@ class EventEmitter {
                         listeners[i].fn.call(listeners[i].context, a1, a2);
                         break;
                     default:
-                        if (!args_) for (j = 1, args_ = new Array(len - 1); j < len; j++) {
-                            args_[j - 1] = arguments[j];
+                        if (!args1) {
+                            for (j = 1, args1 = new Array(len - 1); j < len; j++) {
+                                args1[j - 1] = arguments[j];
+                            }
                         }
 
-                        listeners[i].fn.apply(listeners[i].context, args_);
+                        listeners[i].fn.apply(listeners[i].context, args1);
                 }
             }
         }
@@ -170,7 +198,7 @@ class EventEmitter {
      * @param {*} [context=this] The context of the function.
      * @api public
      */
-    on(event: TEventName, fn: Function, context?: any): this {
+    public on(event: TEventName, fn: Function, context?: any): this {
         let listener = new EE(fn, context || this);
 
         if (!this._events) {
@@ -196,15 +224,21 @@ class EventEmitter {
      * @param {*} [context=this] The context of the function.
      * @api public
      */
-    once(event: TEventName, fn: Function, context?: any): EventEmitter {
+    public once(event: TEventName, fn: Function, context?: any): EventEmitter {
         let listener = new EE(fn, context || this, true);
-        if (!this._events) this._events = Object.create(null);
-        if (!this._events[event]) this._events[event] = listener;
-        else {
-            if (!this._events[event].fn) this._events[event].push(listener);
-            else this._events[event] = [
-                this._events[event], listener
-            ];
+        if (!this._events) {
+            this._events = Object.create(null);
+        }
+        if (!this._events[event]) {
+            this._events[event] = listener;
+        } else {
+            if (!this._events[event].fn) {
+                this._events[event].push(listener);
+            } else {
+                this._events[event] = [
+                    this._events[event], listener
+                ];
+            }
         }
 
         return this;
@@ -219,10 +253,13 @@ class EventEmitter {
      * @param {Boolean} once Only remove once listeners.
      * @api public
      */
-    removeListener(event: TEventName, fn?: Function, context?: any, once?: boolean) {
-        if (!this._events || !this._events[event]) return this;
+    public removeListener(event: TEventName, fn?: Function, context?: any, once?: boolean) {
+        if (!this._events || !this._events[event]) {
+            return this;
+        }
 
-        let listeners = this._events[event], events = [];
+        let listeners = this._events[event];
+        let events = [];
 
         if (fn) {
             if (listeners.fn) {
@@ -263,15 +300,19 @@ class EventEmitter {
      *
      * @param  event The event want to remove all listeners for.
      */
-    removeAllListeners(event?: TEventName): this {
-        if (!this._events) return this;
+    public removeAllListeners(event?: TEventName): this {
+        if (!this._events) {
+            return this;
+        }
 
-        if (event) delete this._events[event];
-        else this._events = Object.create(null);
+        if (event) {
+            delete this._events[event];
+        } else {
+            this._events = Object.create(null);
+        }
 
         return this;
     };
 }
 
 export  = EventEmitter;
-

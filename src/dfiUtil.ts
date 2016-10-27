@@ -1,10 +1,9 @@
 import {IDfiCallbackResult} from "./dfiInterfaces";
 import DebugLogger = require("local-dfi-debug-logger/debugLogger");
 
-
 class DfiUtil {
     public static maybeCallbackOnce(fn: IDfiCallbackResult, context, err?, response?): void {
-        if (typeof fn == "function") {
+        if (typeof fn === "function") {
             if (fn.fired) {
                 DfiUtil.logger.error("callback was fired before fn : \n%s", ((fn.prototype && fn.prototype.constructor) ? fn.prototype.constructor : fn.toString()));
                 throw err ? err : response;
@@ -16,11 +15,14 @@ class DfiUtil {
     }
 
     public static maybeCallback(fn: IDfiCallbackResult, context, err?, response?): void {
-        if (typeof fn == "function") {
+        if (typeof fn === "function") {
             fn.call(context, err, response);
         }
     }
 
+    public static obj2map<V>(obj: {[key: string]: V}): Map<string, V> {
+        return new Map(DfiUtil._entries< V>(obj));
+    }
 
     private static get logger() {
         return logger;
@@ -34,11 +36,7 @@ class DfiUtil {
         }
     }
 
-    public static obj2map<V>(obj: {[key: string]: V}): Map<string, V> {
-        return new Map(DfiUtil._entries< V>(obj))
-    }
 }
 const logger = new DebugLogger("dfi:util");
-
 
 export = DfiUtil;

@@ -1,71 +1,100 @@
-import DfiObject = require("./dfiObject");
-import {IDfiBaseCollectionEvents, IDfiBaseCollectionConfig, TEventName} from "./dfiInterfaces";
+import {IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, TEventName} from "./dfiInterfaces";
 import DfiModel = require("./dfiModel");
 import DfiEventObject = require("./dfiEventObject");
 
+const PROP_COLLECTION = "collection";
+const PROP_PROXY_CALLBACKS = "proxyCallbacks";
+const PROP_ID_FIELD = "idField";
+const PROP_MODEL = "model";
 
-abstract class DfiCollection extends DfiEventObject {
+abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
+    static get events(): IDfiBaseCollectionEvents {
+        return EVENTS;
+    }
+
+    get size() {
+        return this.getProp(PROP_COLLECTION).size;
+    }
 
     constructor(options?: IDfiBaseCollectionConfig) {
 
         options = options || {};
         if (!options.loggerName) {
-            options.loggerName = 'dfi:collection:';
+            options.loggerName = "dfi:collection:";
         }
 
         super(options);
 
-        this.setProp('collection', new Map());
-        this.setProp('proxyCallbacks', new Map());
+        this.setProp(PROP_COLLECTION, new Map());
+        this.setProp(PROP_PROXY_CALLBACKS, new Map());
 
         if (options.idField) {
-            this.setProp('idField', options.idField);
+            this.setProp(PROP_ID_FIELD, options.idField);
         }
         if (options.model) {
-            this.setProp('model', options.model);
+            this.setProp(PROP_MODEL, options.model);
         }
 
     }
 
-    has<T extends DfiModel>(element: T | any): boolean {
-        let id = (this.getProp('model') && element instanceof this.getProp('model')) ? element.id : element;
-        return this.getProp('collection').has(id);
+    public destroy() {
+        this.removeAllListeners();
+        this.getProp(PROP_COLLECTION).clear();
+        this.proxyOffAll();
+        super.destroy();
     }
 
-    get<T extends DfiModel>(id): T {
+    public toJSON(): Object {
+        let out = {
+            entries: Object.create(null),
+            size: this.getProp(PROP_COLLECTION).size
+        };
+        this.getProp(PROP_COLLECTION).forEach((value, key) => {
+            out.entries[key] = value;
+        });
 
-        return this.getProp('collection').get(id);
+        return out;
     }
 
-    add<T extends DfiModel>(element: T): Map<any,any> {
-        let res = this.getProp('collection').set(element.id, element);
+    protected has(element: T | any): boolean {
+        let id = (this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL)) ? element.id : element;
+        return this.getProp(PROP_COLLECTION).has(id);
+    }
+
+    protected  get(id): T {
+
+        return this.getProp(PROP_COLLECTION).get(id);
+    }
+
+    protected add(element: T): Map<any, any> {
+        let res = this.getProp(PROP_COLLECTION).set(element.id, element);
 
         element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
 
-        this.emit(DfiCollection.events.ADD, element, this.getProp('collection'));
-        this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, 1);
+        this.emit(DfiCollection.events.ADD, element, this.getProp(PROP_COLLECTION));
+        this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), element, 1);
 
-        return res
+        return res;
     }
 
-    remove<T extends DfiModel>(element: T | any): boolean {
-        let id = element instanceof this.getProp('model') ? element.id : element;
-        element = this.getProp('collection').get(id);
+    protected remove(element: T | any): boolean {
+        let id = this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL) ? element.id : element;
+        element = this.getProp(PROP_COLLECTION).get(id);
 
         let res = false;
         if (element) {
-            res = this.getProp('collection').delete(id);
+            res = this.getProp(PROP_COLLECTION).delete(id);
             element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
 
-            this.emit(DfiCollection.events.REMOVE, element, this.getProp('collection'));
-            this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), element, -1);
+            this.emit(DfiCollection.events.REMOVE, element, this.getProp(PROP_COLLECTION));
+            this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), element, -1);
         }
-        return res
+        return res;
     }
 
-    keys(): Array<any> {
-        var keys = [];
-        var iterator = this.getProp('collection').keys();
+    protected keys(): Array<any> {
+        let keys = [];
+        let iterator = this.getProp(PROP_COLLECTION).keys();
 
         for (let key of iterator) {
             keys.push(key);
@@ -73,19 +102,19 @@ abstract class DfiCollection extends DfiEventObject {
         return keys;
     }
 
-    clear(): this {
-        this.getProp('collection').clear();
-        this.emit(DfiCollection.events.UPDATE, this.getProp('collection'), null, 0);
+    protected clear(): this {
+        this.getProp(PROP_COLLECTION).clear();
+        this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), null, 0);
         return this;
     }
 
-    forEach<K,V>(Fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void {
-        return this.getProp('collection').forEach(Fn, thisArg);
+    protected forEach<K, V>(fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void {
+        return this.getProp(PROP_COLLECTION).forEach(fn, thisArg);
     }
 
-    toArray<T extends DfiModel>(): Array<T> {
-        var entries = [];
-        var iterator = this.getProp('collection').values();
+    protected toArray(): Array<T> {
+        let entries = [];
+        let iterator = this.getProp(PROP_COLLECTION).values();
 
         for (let value of iterator) {
             entries.push(value);
@@ -93,103 +122,70 @@ abstract class DfiCollection extends DfiEventObject {
         return entries;
     }
 
-    toJSON(): Object {
-        let out = {
-            size: this.getProp('collection').size,
-            entries: Object.create(null)
-        };
-        this.getProp('collection').forEach((value, key)=> {
-            out['entries'][key] = value
-        });
+    protected proxyOn(event: TEventName, fn: Function, context?: any) {
 
-
-        return out;
-    }
-
-    get size() {
-        return this.getProp('collection').size;
-    }
-
-    destroy() {
-        this.removeAllListeners();
-        this.getProp('collection').clear();
-        this.proxyOffAll();
-        super.destroy();
-    }
-
-    _onMemberAll(event) {
-        if (this.getProp('proxyCallbacks').size > 0) {
-            if (this.getProp('proxyCallbacks').has(event)) {
-                let args = Array.prototype.slice.call(arguments);
-                args.shift();
-                let handlers = this.getProp('proxyCallbacks').get(event);
-                handlers.forEach((handler)=> {
-                    handler.f.apply(handler.t, args);
-                })
-            } else if (this.getProp('proxyCallbacks').has(DfiEventObject.events.ALL)) {
-                let args = Array.prototype.slice.call(arguments);
-                let handlers = this.getProp('proxyCallbacks').get(DfiEventObject.events.ALL);
-                handlers.forEach((handler)=> {
-                    handler.c.apply(handler.t, args);
-                })
-            }
-        }
-    }
-
-    proxyOn(event: TEventName, fn: Function, context?: any) {
-
-        let proxyCallbacks = this.getProp('proxyCallbacks');
+        let proxyCallbacks = this.getProp(PROP_PROXY_CALLBACKS);
         if (!proxyCallbacks.has(event)) {
             proxyCallbacks.set(event, new Set());
         }
         let assigner = {
             c: fn,
-            t: context,
+            t: context
         };
         let handlers = proxyCallbacks.get(event);
         handlers.add(assigner);
 
     }
 
-    proxyOff(event: TEventName, fn: Function, context?: any): void {
-        let handlers = this.getProp('proxyCallbacks').get(event);
+    protected proxyOff(event: TEventName, fn: Function, context?: any): void {
+        let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
         if (handlers) {
-            handlers.forEach((handler)=> {
-                if ((handler.c == fn && handler.t == context) || !fn) {
+            handlers.forEach((handler) => {
+                if ((handler.c === fn && handler.t === context) || !fn) {
                     handlers.delete(handler);
                 }
             });
-            if (handlers.size == 0) {
-                this.getProp('proxyCallbacks').delete(event);
+            if (handlers.size === 0) {
+                this.getProp(PROP_PROXY_CALLBACKS).delete(event);
             }
         }
     }
 
-    proxyOffAll(): void {
-        this.getProp('proxyCallbacks').forEach((handlers, event)=> {
+    protected proxyOffAll(): void {
+        this.getProp(PROP_PROXY_CALLBACKS).forEach((handlers, event) => {
             handlers.forEach((handler) => {
                 this.proxyOff(event, handler.c, handler.t);
-            })
+            });
         });
     }
 
-    static get events(): IDfiBaseCollectionEvents {
-        return Events;
+    private _onMemberAll(event) {
+        if (this.getProp(PROP_PROXY_CALLBACKS).size > 0) {
+            if (this.getProp(PROP_PROXY_CALLBACKS).has(event)) {
+                let args = Array.prototype.slice.call(arguments);
+                args.shift();
+                let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
+                handlers.forEach((handler) => {
+                    handler.f.apply(handler.t, args);
+                });
+            } else if (this.getProp(PROP_PROXY_CALLBACKS).has(DfiEventObject.events.ALL)) {
+                let args = Array.prototype.slice.call(arguments);
+                let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(DfiEventObject.events.ALL);
+                handlers.forEach((handler) => {
+                    handler.c.apply(handler.t, args);
+                });
+            }
+        }
     }
 }
 
-
 export =  DfiCollection;
 
-
-const Events: IDfiBaseCollectionEvents = Object.assign(
+const EVENTS: IDfiBaseCollectionEvents = Object.assign(
     Object.assign({}, DfiEventObject.events),
     {
-        ADD: Symbol(DfiCollection.prototype.constructor.name + ':add'),
-        REMOVE: Symbol(DfiCollection.prototype.constructor.name + ':delete'),
-        UPDATE: Symbol(DfiCollection.prototype.constructor.name + ':update')
+        ADD: Symbol(DfiCollection.prototype.constructor.name + ":add"),
+        REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":delete"),
+        UPDATE: Symbol(DfiCollection.prototype.constructor.name + ":update")
     }
 );
-
-
-

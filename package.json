@@ -12,5 +12,9 @@
   "dependencies": {
     "local-dfi-debug-logger": "*"
   },
-  "typings": "index.d.ts"
+  "typings": "index.d.ts",
+  "devDependencies": {
+    "@types/mocha": "^2.2.32",
+    "mocha": "^3.1.2"
+  }
 }
