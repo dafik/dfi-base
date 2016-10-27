@@ -11,6 +11,6 @@
   "license": "UNLICENSED",
   "dependencies": {
     "local-dfi-debug-logger": "*"
-  }
-  "types":""
+  },
+  "typings":"index.d.ts"
 }
