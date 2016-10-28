@@ -5,13 +5,12 @@ import DfiCollection = require("./src/dfiCollection");
 import DfiUtil = require("./src/dfiUtil");
 import {IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, IDfiBaseEventObjectEvents, IDfiBaseModelConfig, IDfiBaseModelEvents, IDfiBaseObjectConfig} from "./src/dfiInterfaces";
 
-let a1: IDfiBaseObjectConfig;
-let a2: IDfiBaseModelConfig;
-let a3: IDfiBaseCollectionConfig<DfiModel>;
-let a4: IDfiBaseEventObjectEvents;
-let a5: IDfiBaseModelEvents;
-let a6: IDfiBaseCollectionEvents;
-
+declare let a1: IDfiBaseObjectConfig;
+declare let a2: IDfiBaseModelConfig;
+declare let a3: IDfiBaseCollectionConfig<DfiModel>;
+declare let a4: IDfiBaseEventObjectEvents;
+declare let a5: IDfiBaseModelEvents;
+declare let a6: IDfiBaseCollectionEvents;
 
 declare module "local-dfi-base" {
 
@@ -20,12 +19,18 @@ declare module "local-dfi-base" {
         DfiEventObject,
         DfiModel,
         DfiCollection,
-        DfiUtil
+        DfiUtil,
         IDfiBaseCollectionConfig,
         IDfiBaseCollectionEvents,
         IDfiBaseEventObjectEvents,
         IDfiBaseModelConfig,
         IDfiBaseModelEvents,
         IDfiBaseObjectConfig,
+        a1,
+        a2,
+        a3,
+        a4,
+        a5,
+        a6
     };
 }
