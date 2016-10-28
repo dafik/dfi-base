@@ -7,7 +7,7 @@ const PROP_PROXY_CALLBACKS = "proxyCallbacks";
 const PROP_ID_FIELD = "idField";
 const PROP_MODEL = "model";
 
-abstract class DfiCollection<M extends DfiModel> extends DfiEventObject {
+abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
     static get events(): IDfiBaseCollectionEvents {
         return EVENTS;
     }
@@ -107,7 +107,7 @@ abstract class DfiCollection<M extends DfiModel> extends DfiEventObject {
         return this;
     }
 
-    protected forEach<K, V>(fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void {
+    protected forEach(fn: (value: M, index: K, map: Map<K, M>) => void, thisArg?: any): void {
         return this.getProp(PROP_COLLECTION).forEach(fn, thisArg);
     }
 
