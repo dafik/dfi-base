@@ -9,9 +9,9 @@ declare module "local-dfi-base" {
     export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {
         idAttribute?: string;
     }
-    export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
+    export interface IDfiBaseCollectionConfig<M> extends IDfiBaseObjectConfig {
         idField?: string;
-        model?: string;
+        model?: M;
     }
 
     // events
@@ -104,20 +104,20 @@ declare module "local-dfi-base" {
     }
 
     // collection
-    export abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
+    export abstract class DfiCollection<M extends DfiModel> extends DfiEventObject {
         public static readonly events: IDfiBaseCollectionEvents;
         public readonly size: number;
-        constructor(options?: IDfiBaseCollectionConfig);
+        constructor(options?: IDfiBaseCollectionConfig<M>);
         public destroy(): void;
         public toJSON(): Object;
-        protected has(element: T | any): boolean;
-        protected get(id: any): T;
-        protected add(element: T): this;
-        protected remove(element: T | any): boolean;
+        protected has(element: M | any): boolean;
+        protected get(id: any): M;
+        protected add(element: M): this;
+        protected remove(element: M | any): boolean;
         protected keys(): Array<any>;
         protected clear(): this;
         protected forEach<K, V>(fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void;
-        protected toArray(): Array<T>;
+        protected toArray(): Array<M>;
         protected proxyOn(event: TEventName, fn: Function, context?: any): this;
         protected proxyOff(event: TEventName, fn: Function, context?: any): this;
         protected proxyOffAll(): this;

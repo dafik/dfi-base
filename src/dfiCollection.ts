@@ -7,7 +7,7 @@ const PROP_PROXY_CALLBACKS = "proxyCallbacks";
 const PROP_ID_FIELD = "idField";
 const PROP_MODEL = "model";
 
-abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
+abstract class DfiCollection<M extends DfiModel> extends DfiEventObject {
     static get events(): IDfiBaseCollectionEvents {
         return EVENTS;
     }
@@ -16,7 +16,7 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return this.getProp(PROP_COLLECTION).size;
     }
 
-    constructor(options?: IDfiBaseCollectionConfig) {
+    constructor(options?: IDfiBaseCollectionConfig<M>) {
 
         options = options || {};
         if (!options.loggerName) {
@@ -56,17 +56,17 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return out;
     }
 
-    protected has(element: T | any): boolean {
+    protected has(element: M | any): boolean {
         let id = (this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL)) ? element.id : element;
         return this.getProp(PROP_COLLECTION).has(id);
     }
 
-    protected  get(id): T {
+    protected  get(id): M {
 
         return this.getProp(PROP_COLLECTION).get(id);
     }
 
-    protected add(element: T): this {
+    protected add(element: M): this {
         this.getProp(PROP_COLLECTION).set(element.id, element);
 
         element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
@@ -76,7 +76,7 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return this;
     }
 
-    protected remove(element: T | any): boolean {
+    protected remove(element: M | any): boolean {
         let id = this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL) ? element.id : element;
         element = this.getProp(PROP_COLLECTION).get(id);
 
@@ -111,7 +111,7 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return this.getProp(PROP_COLLECTION).forEach(fn, thisArg);
     }
 
-    protected toArray(): Array<T> {
+    protected toArray(): Array<M> {
         let entries = [];
         let iterator = this.getProp(PROP_COLLECTION).values();
 

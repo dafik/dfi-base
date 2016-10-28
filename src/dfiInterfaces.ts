@@ -7,9 +7,9 @@ export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {
     idAttribute?: string;
 }
 
-export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
+export interface IDfiBaseCollectionConfig<M> extends IDfiBaseObjectConfig {
     idField?: string;
-    model?: string;
+    model?: M;
 }
 
 // events
