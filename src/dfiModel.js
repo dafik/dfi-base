@@ -43,6 +43,11 @@ class DfiModel extends DfiEventObject {
     get lastUpdate() {
         return this.getProp(PROP_LAST_UPDATE);
     }
+    destroy() {
+        this.getProp(PROP_ATTRIBUTES).clear();
+        super.destroy();
+        this.destroyed = true;
+    }
     toJSON() {
         let attr = { id: this.id };
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
@@ -57,11 +62,6 @@ class DfiModel extends DfiEventObject {
         });
         let prop = super.toPlain();
         return { attr, prop };
-    }
-    destroy() {
-        this.getProp(PROP_ATTRIBUTES).clear();
-        super.destroy();
-        this.destroyed = true;
     }
     get(attribute) {
         if (this.getProp(PROP_ATTRIBUTES)) {

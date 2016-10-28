@@ -12,6 +12,11 @@ class DfiEventObject extends DfiObject {
     get eventNames() {
         return this._ee.eventNames();
     }
+    destroy() {
+        this.emit(DfiEventObject.events.DESTROY);
+        this.removeAllListeners();
+        super.destroy();
+    }
     on(event, fn, context) {
         if (event === undefined) {
             throw new Error("undefined event");
@@ -76,11 +81,6 @@ class DfiEventObject extends DfiObject {
     }
     removeAllListeners(event) {
         return this._ee.removeAllListeners(event);
-    }
-    destroy() {
-        this.emit(DfiEventObject.events.DESTROY);
-        this.removeAllListeners();
-        super.destroy();
     }
     get _ee() {
         return this.getProp("emitter");

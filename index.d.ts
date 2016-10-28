@@ -1,54 +1,46 @@
 declare module "local-dfi-base" {
-    import DebugLogger = require("local-dfi-debug-logger/debugLogger");
-//config
+    import DebugLogger = require("local-dfi-debug-logger");
+    import EventEmitter = require("./dfiEventEmitter");
+
+    // config
     export interface IDfiBaseObjectConfig extends Object {
-        loggerName?: string
+        loggerName?: string;
     }
-
     export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {
-        idAttribute?: string,
+        idAttribute?: string;
     }
-
     export interface IDfiBaseCollectionConfig extends IDfiBaseObjectConfig {
-        idField?: string,
-        model?: string
+        idField?: string;
+        model?: string;
     }
 
-//events
-
+    // events
     export interface IDfiBaseEventObjectEvents extends Object {
-        ALL: symbol
-        DESTROY: symbol
+        ALL: symbol;
+        DESTROY: symbol;
     }
-
     export interface IDfiBaseModelEvents extends IDfiBaseEventObjectEvents {
-        ADD: symbol,
-        REMOVE: symbol,
-        UPDATE: symbol
+        ADD: symbol;
+        REMOVE: symbol;
+        UPDATE: symbol;
     }
-
     export interface IDfiBaseCollectionEvents extends IDfiBaseEventObjectEvents {
-        ADD: symbol,
-        REMOVE: symbol,
-        UPDATE: symbol
+        ADD: symbol;
+        REMOVE: symbol;
+        UPDATE: symbol;
     }
-//arguments
 
+    // arguments
     export interface IDfiBaseModelAttribs extends Object {
-        id?: any
+        id?: any;
     }
 
-
-//types
-
+    // types
     export type TEventName = string | symbol;
-
-
     export interface IDfiCallbackError extends Function {
         (error?: Error): void;
         fired?: boolean;
     }
-
     export interface IDfiCallbackResult extends IDfiCallbackError {
         (error?: Error, result?): void;
         fired?: boolean;
@@ -59,197 +51,84 @@ declare module "local-dfi-base" {
      * EventEmitter interface.
      */
     class EventEmitter {
-        private _events;
-
-        /**
-         * Return an array listing the events for which the emitter has registered
-         * listeners.
-         */
-        eventNames(exists?: boolean): Array<TEventName>;
-
-        /**
-         * Return a list of assigned event listeners.
-         *
-         * @param {String | Symbol} event The events that should be listed.
-         * @param {Boolean} exists We only need to know if there are listeners.
-         * @returns {Array|Boolean}
-         */
-        listeners(event?: TEventName, exists?: boolean): Function[] | boolean;
-
-        /**
-         * Emit an event to all registered event listeners.
-         *
-         * @param {String} event The name of the event.
-         * @param a1 :a
-         * @param a2
-         * @param a3
-         * @param a4
-         * @param a5
-         * @param args
-         * @returns {Boolean} Indication if we've emitted an event.
-         * @api public
-         */
-        emit(event: TEventName, a1: any, a2: any, a3: any, a4: any, a5: any, ...args: any[]): boolean;
-
-        /**
-         * Register a new EventListener for the given event.
-         *
-         * @param {String} event Name of the event.
-         * @param {Function} fn Callback function.
-         * @param {*} [context=this] The context of the function.
-         * @api public
-         */
-        on(event: TEventName, fn: Function, context?: any): this;
-
-        /**
-         * Add an EventListener that's only called once.
-         *
-         * @param {String} event Name of the event.
-         * @param {Function} fn Callback function.
-         * @param {*} [context=this] The context of the function.
-         * @api public
-         */
-        once(event: TEventName, fn: Function, context?: any): EventEmitter;
-
-        /**
-         * Remove event listeners.
-         *
-         * @param {String} event The event we want to remove.
-         * @param {Function} fn The listener that we need to find.
-         * @param {*} context Only remove listeners matching this context.
-         * @param {Boolean} once Only remove once listeners.
-         * @api public
-         */
-        removeListener(event: TEventName, fn?: Function, context?: any, once?: boolean): this;
-
-        /**
-         * Remove all listeners or only the listeners for the specified event.
-         *
-         * @param  event The event want to remove all listeners for.
-         */
-        removeAllListeners(event?: TEventName): this;
+        public eventNames(exists?: boolean): Array<TEventName>;
+        public listeners(event?: TEventName, exists?: boolean): Function[] | boolean;
+        public emit(event: TEventName, a1: any, a2: any, a3: any, a4: any, a5: any, ...args: any[]): boolean;
+        public on(event: TEventName, fn: Function, context?: any): this;
+        public once(event: TEventName, fn: Function, context?: any): EventEmitter;
+        public removeListener(event: TEventName, fn?: Function, context?: any, once?: boolean): this;
+        public removeAllListeners(event?: TEventName): this;
     }
 
+    // object
     export abstract class DfiObject {
-        destroyed?: boolean;
-
+        public destroyed?: boolean;
+        public readonly logger: DebugLogger;
         constructor(options?: IDfiBaseObjectConfig);
-
-        readonly options: IDfiBaseObjectConfig;
-        readonly logger: DebugLogger;
-
-        getProp(key: any): any;
-
-        setProp(key: any, value: any): DfiObject;
-
-        hasProp(key: any): boolean;
-
-        removeProp(key: any): boolean;
-
-        destroy(): void;
-
-        __getProp(): Map<any, any>;
-
-        toPlain(): Object;
+        public destroy(): void;
+        public toPlain(): Object;
+        protected getProp(key: any): any;
+        protected setProp(key: any, value: any): DfiObject;
+        protected hasProp(key: any): boolean;
+        protected removeProp(key: any): boolean;
     }
+
+    // eventObject
 
     export abstract class DfiEventObject extends DfiObject {
+        public static readonly events: IDfiBaseEventObjectEvents;
+        public readonly eventNames: (string | symbol)[];
         constructor(options?: IDfiBaseObjectConfig);
-
-        private readonly _ee;
-
-        on(event: TEventName, fn: Function, context?: any): EventEmitter;
-
-        readonly eventNames: (string | symbol)[];
-
-        once(event: TEventName, fn: Function, context?: any): EventEmitter;
-
-        emit(event: TEventName, ...args: any[]): boolean;
-
-        off(event: TEventName, fn?: Function, context?: any, once?: boolean): EventEmitter;
-
-        removeAllListeners(event?: string): EventEmitter;
-
-        destroy(): void;
-
-        static readonly events: IDfiBaseEventObjectEvents;
+        public destroy(): void;
+        public on(event: TEventName, fn: Function, context?: any): EventEmitter;
+        public once(event: TEventName, fn: Function, context?: any): EventEmitter;
+        public emit(event: TEventName, ...args: any[]): boolean;
+        public off(event: TEventName, fn?: Function, context?: any, once?: boolean): EventEmitter;
+        public removeAllListeners(event?: string): EventEmitter;
     }
 
-
+    // model
     export abstract class DfiModel extends DfiEventObject {
-        static map: Map<string, string>;
-
+        public static readonly events: IDfiBaseModelEvents;
+        protected static map: Map<string, string>;
+        public readonly id: any;
+        public readonly lastUpdate: number;
         constructor(attributes?: IDfiBaseModelAttribs, options?: IDfiBaseModelConfig);
-
-        readonly id: any;
-        readonly lastUpdate: number;
-
-        stampLastUpdate(): void;
-
-        destroy(): void;
-
-        get(attribute: string): any;
-
-        has(attribute: string): boolean;
-
-        set(attribute: string | Object, value: any, silent?: boolean): this;
-
-        remove(attribute: any): any;
-
-        static readonly events: IDfiBaseModelEvents;
-
-        toJSON(): Object;
-
-        toPlain(): Object;
-
-        private _getAttributeMap(attributes);
+        public destroy(): void;
+        public toJSON(): Object;
+        public toPlain(): Object;
+        protected get(attribute: string): any;
+        protected has(attribute: string): boolean;
+        protected set(attribute: string | Object, value: any, silent?: boolean): this;
+        protected remove(attribute: any): any;
     }
 
-
-    export abstract class DfiCollection extends DfiEventObject {
-
+    // collection
+    export abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
+        public static readonly events: IDfiBaseCollectionEvents;
+        public readonly size: number;
         constructor(options?: IDfiBaseCollectionConfig);
-
-        has<T extends DfiModel>(element: T | any): boolean;
-
-        get<T extends DfiModel>(id: any): T;
-
-        add<T extends DfiModel>(element: T): Map<any, any>;
-
-        remove<T extends DfiModel>(element: T | any): boolean;
-
-        keys(): Array<any>;
-
-        clear(): this;
-
-        forEach<K, V>(Fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void;
-
-        toArray<T extends DfiModel>(): Array<T>;
-
-        toJSON(): Object;
-
-        readonly size: any;
-
-        destroy(): void;
-
-        _onMemberAll(event: any): void;
-
-        proxyOn(event: TEventName, fn: Function, context?: any): void;
-
-        proxyOff(event: TEventName, fn: Function, context?: any): void;
-
-        proxyOffAll(): void;
-
-        static readonly events: IDfiBaseCollectionEvents;
+        public destroy(): void;
+        public toJSON(): Object;
+        protected has(element: T | any): boolean;
+        protected get(id: any): T;
+        protected add(element: T): this;
+        protected remove(element: T | any): boolean;
+        protected keys(): Array<any>;
+        protected clear(): this;
+        protected forEach<K, V>(fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void;
+        protected toArray(): Array<T>;
+        protected proxyOn(event: TEventName, fn: Function, context?: any): this;
+        protected proxyOff(event: TEventName, fn: Function, context?: any): this;
+        protected proxyOffAll(): this;
     }
-    declare class DfiUtil {
-        static maybeCallbackOnce(fn: IDfiCallbackResult, context: any, err?: any, response?: any): void;
-        static maybeCallback(fn: IDfiCallbackResult, context: any, err?: any, response?: any): void;
-        private static readonly logger;
-        private static _entries<V>(obj);
-        static obj2map<V>(obj: {
+
+    // utils
+    export class DfiUtil {
+        public static maybeCallbackOnce(fn: IDfiCallbackResult, context: any, err?: any, response?: any): void;
+        public static maybeCallback(fn: IDfiCallbackResult, context: any, err?: any, response?: any): void;
+        public static obj2map<V>(obj: {
             [key: string]: V;
         }): Map<string, V>;
     }
-
 }

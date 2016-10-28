@@ -18,6 +18,11 @@ class DfiObject {
     get logger() {
         return privateProperties.get(this).get(PROP_LOGGER);
     }
+    destroy() {
+        privateProperties.get(this).clear();
+        privateProperties.delete(this);
+        this.destroyed = true;
+    }
     toPlain() {
         let prop = {};
         let p = privateProperties.get(this);
@@ -42,11 +47,6 @@ class DfiObject {
     }
     removeProp(key) {
         return privateProperties.get(this).delete(key);
-    }
-    destroy() {
-        privateProperties.get(this).clear();
-        privateProperties.delete(this);
-        this.destroyed = true;
     }
 }
 module.exports = DfiObject;

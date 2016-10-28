@@ -55,6 +55,12 @@ abstract class DfiModel extends DfiEventObject {
         this.stampLastUpdate();
     }
 
+    public destroy() {
+        this.getProp(PROP_ATTRIBUTES).clear();
+        super.destroy();
+        this.destroyed = true;
+    }
+
     public toJSON(): Object {
         let attr = {id: this.id};
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
@@ -71,12 +77,6 @@ abstract class DfiModel extends DfiEventObject {
 
         let prop = super.toPlain();
         return {attr, prop};
-    }
-
-    public destroy() {
-        this.getProp(PROP_ATTRIBUTES).clear();
-        super.destroy();
-        this.destroyed = true;
     }
 
     protected get(attribute: string): any {

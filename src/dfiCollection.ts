@@ -12,7 +12,7 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return EVENTS;
     }
 
-    get size() {
+    get size(): number {
         return this.getProp(PROP_COLLECTION).size;
     }
 
@@ -66,15 +66,14 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return this.getProp(PROP_COLLECTION).get(id);
     }
 
-    protected add(element: T): Map<any, any> {
-        let res = this.getProp(PROP_COLLECTION).set(element.id, element);
+    protected add(element: T): this {
+        this.getProp(PROP_COLLECTION).set(element.id, element);
 
         element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
 
         this.emit(DfiCollection.events.ADD, element, this.getProp(PROP_COLLECTION));
         this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), element, 1);
-
-        return res;
+        return this;
     }
 
     protected remove(element: T | any): boolean {
@@ -122,7 +121,7 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         return entries;
     }
 
-    protected proxyOn(event: TEventName, fn: Function, context?: any) {
+    protected proxyOn(event: TEventName, fn: Function, context?: any): this {
 
         let proxyCallbacks = this.getProp(PROP_PROXY_CALLBACKS);
         if (!proxyCallbacks.has(event)) {
@@ -134,10 +133,10 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
         };
         let handlers = proxyCallbacks.get(event);
         handlers.add(assigner);
-
+        return this;
     }
 
-    protected proxyOff(event: TEventName, fn: Function, context?: any): void {
+    protected proxyOff(event: TEventName, fn: Function, context?: any): this {
         let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
         if (handlers) {
             handlers.forEach((handler) => {
@@ -149,14 +148,16 @@ abstract class DfiCollection<T extends DfiModel> extends DfiEventObject {
                 this.getProp(PROP_PROXY_CALLBACKS).delete(event);
             }
         }
+        return this;
     }
 
-    protected proxyOffAll(): void {
+    protected proxyOffAll(): this {
         this.getProp(PROP_PROXY_CALLBACKS).forEach((handlers, event) => {
             handlers.forEach((handler) => {
                 this.proxyOff(event, handler.c, handler.t);
             });
         });
+        return this;
     }
 
     private _onMemberAll(event) {

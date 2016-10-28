@@ -8,6 +8,10 @@ const PROP_LOGGER = "logger";
 abstract class DfiObject {
     public destroyed?: boolean;
 
+    public get logger(): DebugLogger {
+        return privateProperties.get(this).get(PROP_LOGGER);
+    }
+
     constructor(options?: IDfiBaseObjectConfig) {
 
         privateProperties.set(this, new Map());
@@ -24,8 +28,11 @@ abstract class DfiObject {
         }
     }
 
-    public get logger(): DebugLogger {
-        return privateProperties.get(this).get(PROP_LOGGER);
+    public destroy() {
+        privateProperties.get(this).clear();
+        privateProperties.delete(this);
+
+        this.destroyed = true;
     }
 
     public toPlain(): Object {
@@ -56,13 +63,6 @@ abstract class DfiObject {
 
     protected removeProp(key): boolean {
         return privateProperties.get(this).delete(key);
-    }
-
-    protected destroy() {
-        privateProperties.get(this).clear();
-        privateProperties.delete(this);
-
-        this.destroyed = true;
     }
 
 }

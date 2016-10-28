@@ -50,11 +50,11 @@ class DfiCollection extends DfiEventObject {
         return this.getProp(PROP_COLLECTION).get(id);
     }
     add(element) {
-        let res = this.getProp(PROP_COLLECTION).set(element.id, element);
+        this.getProp(PROP_COLLECTION).set(element.id, element);
         element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
         this.emit(DfiCollection.events.ADD, element, this.getProp(PROP_COLLECTION));
         this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), element, 1);
-        return res;
+        return this;
     }
     remove(element) {
         let id = this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL) ? element.id : element;
@@ -103,6 +103,7 @@ class DfiCollection extends DfiEventObject {
         };
         let handlers = proxyCallbacks.get(event);
         handlers.add(assigner);
+        return this;
     }
     proxyOff(event, fn, context) {
         let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
@@ -116,6 +117,7 @@ class DfiCollection extends DfiEventObject {
                 this.getProp(PROP_PROXY_CALLBACKS).delete(event);
             }
         }
+        return this;
     }
     proxyOffAll() {
         this.getProp(PROP_PROXY_CALLBACKS).forEach((handlers, event) => {
@@ -123,6 +125,7 @@ class DfiCollection extends DfiEventObject {
                 this.proxyOff(event, handler.c, handler.t);
             });
         });
+        return this;
     }
     _onMemberAll(event) {
         if (this.getProp(PROP_PROXY_CALLBACKS).size > 0) {

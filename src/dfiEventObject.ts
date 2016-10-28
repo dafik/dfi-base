@@ -17,6 +17,13 @@ abstract class DfiEventObject extends DfiObject {
         this.setProp("emitter", new EventEmitter());
     }
 
+    public destroy() {
+        this.emit(DfiEventObject.events.DESTROY);
+        this.removeAllListeners();
+
+        super.destroy();
+    }
+
     public on(event: TEventName, fn: Function, context?: any): EventEmitter {
         if (event === undefined) {
             throw new Error("undefined event");
@@ -89,13 +96,6 @@ abstract class DfiEventObject extends DfiObject {
 
     public removeAllListeners(event?: string): EventEmitter {
         return this._ee.removeAllListeners(event);
-    }
-
-    protected destroy() {
-        this.emit(DfiEventObject.events.DESTROY);
-        this.removeAllListeners();
-
-        super.destroy();
     }
 
     private get _ee(): EventEmitter {
