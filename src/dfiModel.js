@@ -18,6 +18,11 @@ class DfiModel extends DfiEventObject {
         }
         super(options);
         this.setProp(PROP_ATTRIBUTES, new Map());
+        this._getAttributeMap(attributes).forEach((target, source) => {
+            if (attributes.hasOwnProperty(source)) {
+                this.set(target, attributes[source], true);
+            }
+        });
         if (this.hasProp(PROP_ID_ATTRIBUTE) && this.has(this.getProp(PROP_ID_ATTRIBUTE))) {
             this.setProp(PROP_ID, this.get(this.getProp(PROP_ID_ATTRIBUTE)));
         }
@@ -27,11 +32,6 @@ class DfiModel extends DfiEventObject {
         else {
             this.setProp(PROP_ID, options.loggerName + modelUniqueId());
         }
-        this._getAttributeMap(attributes).forEach((target, source) => {
-            if (attributes.hasOwnProperty(source)) {
-                this.set(target, attributes[source], true);
-            }
-        });
         this.stampLastUpdate();
     }
     static get events() {
