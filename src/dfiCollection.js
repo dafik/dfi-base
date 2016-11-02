@@ -78,7 +78,7 @@ class DfiCollection extends DfiEventObject {
     }
     clear() {
         this.getProp(PROP_COLLECTION).clear();
-        this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), null, 0);
+        this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION));
         return this;
     }
     forEach(fn, thisArg) {

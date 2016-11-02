@@ -129,7 +129,7 @@ abstract class DfiModel extends DfiEventObject {
         return ret;
     }
 
-    private stampLastUpdate(): void {
+    protected stampLastUpdate(): void {
         this.setProp(PROP_LAST_UPDATE, Date.now());
     }
 
