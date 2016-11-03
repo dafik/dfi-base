@@ -18,7 +18,7 @@ abstract class DfiEventObject extends DfiObject {
     }
 
     public destroy() {
-        this.emit(DfiEventObject.events.DESTROY);
+        this.emit(DfiEventObject.events.DESTROY, this);
         this.removeAllListeners();
 
         super.destroy();

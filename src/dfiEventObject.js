@@ -13,7 +13,7 @@ class DfiEventObject extends DfiObject {
         return this._ee.eventNames();
     }
     destroy() {
-        this.emit(DfiEventObject.events.DESTROY);
+        this.emit(DfiEventObject.events.DESTROY, this);
         this.removeAllListeners();
         super.destroy();
     }
