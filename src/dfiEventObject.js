@@ -1,16 +1,25 @@
 "use strict";
 const EventEmitter = require("./dfiEventEmitter");
 const DfiObject = require("./dfiObject");
+const PROP_MAX_EVENTS = "maxEvents";
+const PROP_EMITTER = "emitter";
 class DfiEventObject extends DfiObject {
     constructor(options) {
+        options.maxEvents = options.maxEvents || 10;
         super(options);
-        this.setProp("emitter", new EventEmitter());
+        this.setProp(PROP_EMITTER, new EventEmitter());
     }
     static get events() {
         return EVENTS;
     }
     get eventNames() {
         return this._ee.eventNames();
+    }
+    get maxEvents() {
+        return this.getProp(PROP_MAX_EVENTS);
+    }
+    get _ee() {
+        return this.getProp("emitter");
     }
     destroy() {
         this.emit(DfiEventObject.events.DESTROY, this);
@@ -25,7 +34,7 @@ class DfiEventObject extends DfiObject {
             this.logger.warn('on event not symbol "%s"', event);
         }
         let ret = this._ee.on(event, fn, context);
-        if (this._ee.eventNames(true).length > 10) {
+        if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
         return ret;
@@ -38,7 +47,7 @@ class DfiEventObject extends DfiObject {
             this.logger.warn('once event not symbol "%s"', event);
         }
         let ret = this._ee.once(event, fn, context);
-        if (this._ee.eventNames().length > 10) {
+        if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
         return ret;
@@ -81,9 +90,6 @@ class DfiEventObject extends DfiObject {
     }
     removeAllListeners(event) {
         return this._ee.removeAllListeners(event);
-    }
-    get _ee() {
-        return this.getProp("emitter");
     }
 }
 const EVENTS = Object.assign({}, {

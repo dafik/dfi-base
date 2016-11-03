@@ -2,6 +2,9 @@ import EventEmitter = require("./dfiEventEmitter");
 import {IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
 import DfiObject = require("./dfiObject");
 
+const PROP_MAX_EVENTS = "maxEvents";
+const PROP_EMITTER = "emitter";
+
 abstract class DfiEventObject extends DfiObject {
 
     static get events(): IDfiBaseEventObjectEvents {
@@ -12,9 +15,18 @@ abstract class DfiEventObject extends DfiObject {
         return this._ee.eventNames();
     }
 
+    get maxEvents() {
+        return this.getProp(PROP_MAX_EVENTS);
+    }
+
+    private get _ee(): EventEmitter {
+        return this.getProp("emitter");
+    }
+
     constructor(options?: IDfiBaseObjectConfig) {
+        options.maxEvents = options.maxEvents || 10;
         super(options);
-        this.setProp("emitter", new EventEmitter());
+        this.setProp(PROP_EMITTER, new EventEmitter());
     }
 
     public destroy() {
@@ -32,7 +44,7 @@ abstract class DfiEventObject extends DfiObject {
         }
         let ret = this._ee.on(event, fn, context);
 
-        if (this._ee.eventNames(true).length > 10) {
+        if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
         return ret;
@@ -47,7 +59,7 @@ abstract class DfiEventObject extends DfiObject {
 
         let ret = this._ee.once(event, fn, context);
 
-        if (this._ee.eventNames().length > 10) {
+        if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
         return ret;
@@ -96,10 +108,6 @@ abstract class DfiEventObject extends DfiObject {
 
     public removeAllListeners(event?: string): EventEmitter {
         return this._ee.removeAllListeners(event);
-    }
-
-    private get _ee(): EventEmitter {
-        return this.getProp("emitter");
     }
 }
 

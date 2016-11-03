@@ -1,6 +1,7 @@
 // config
 export interface IDfiBaseObjectConfig extends Object {
     loggerName?: string;
+    maxEvents?: number;
 }
 
 export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {

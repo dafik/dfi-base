@@ -84,7 +84,7 @@ class EventEmitter {
      * @param {Boolean} exists We only need to know if there are listeners.
      * @returns {Array|Boolean}
      */
-    public    listeners(event?: TEventName, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
+    public listeners(event?: TEventName, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
         let available = this._events && this._events[event];
 
         if (exists) {
