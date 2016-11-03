@@ -49,3 +49,9 @@ export interface IDfiCallbackResult extends IDfiCallbackError {
     (error?: Error, result?): void;
     fired?: boolean;
 }
+
+export interface IDfiProxyCallback {
+    c: Function
+    t?: any;
+}
+

@@ -1,4 +1,4 @@
-import {IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, TEventName} from "./dfiInterfaces";
+import {IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, IDfiProxyCallback, TEventName} from "./dfiInterfaces";
 import DfiModel = require("./dfiModel");
 import DfiEventObject = require("./dfiEventObject");
 
@@ -14,6 +14,10 @@ abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
 
     get size(): number {
         return this.getProp(PROP_COLLECTION).size;
+    }
+
+    private get _proxyHandlers(): Map<TEventName, Set<IDfiProxyCallback>> {
+        return this.getProp(PROP_PROXY_CALLBACKS);
     }
 
     constructor(options?: IDfiBaseCollectionConfig<M>) {
@@ -123,11 +127,11 @@ abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
 
     protected proxyOn(event: TEventName, fn: Function, context?: any): this {
 
-        let proxyCallbacks = this.getProp(PROP_PROXY_CALLBACKS);
+        let proxyCallbacks = this._proxyHandlers;
         if (!proxyCallbacks.has(event)) {
             proxyCallbacks.set(event, new Set());
         }
-        let assigner = {
+        let assigner: IDfiProxyCallback = {
             c: fn,
             t: context
         };
@@ -137,7 +141,7 @@ abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
     }
 
     protected proxyOff(event: TEventName, fn: Function, context?: any): this {
-        let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
+        let handlers = this._proxyEventHandlers(event);
         if (handlers) {
             handlers.forEach((handler) => {
                 if ((handler.c === fn && handler.t === context) || !fn) {
@@ -145,14 +149,14 @@ abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
                 }
             });
             if (handlers.size === 0) {
-                this.getProp(PROP_PROXY_CALLBACKS).delete(event);
+                this._proxyHandlers.delete(event);
             }
         }
         return this;
     }
 
     protected proxyOffAll(): this {
-        this.getProp(PROP_PROXY_CALLBACKS).forEach((handlers, event) => {
+        this._proxyHandlers.forEach((handlers, event) => {
             handlers.forEach((handler) => {
                 this.proxyOff(event, handler.c, handler.t);
             });
@@ -161,22 +165,26 @@ abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
     }
 
     private _onMemberAll(event) {
-        if (this.getProp(PROP_PROXY_CALLBACKS).size > 0) {
-            if (this.getProp(PROP_PROXY_CALLBACKS).has(event)) {
+        if (this._proxyHandlers.size > 0) {
+            if (this._proxyHandlers.has(event)) {
                 let args = Array.prototype.slice.call(arguments);
                 args.shift();
-                let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
+                let handlers = this._proxyHandlers.get(event);
                 handlers.forEach((handler) => {
-                    handler.f.apply(handler.t, args);
+                    handler.c.apply(handler.t, args);
                 });
-            } else if (this.getProp(PROP_PROXY_CALLBACKS).has(DfiEventObject.events.ALL)) {
+            } else if (this._proxyHandlers.has(DfiEventObject.events.ALL)) {
                 let args = Array.prototype.slice.call(arguments);
-                let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(DfiEventObject.events.ALL);
+                let handlers = this._proxyHandlers.get(DfiEventObject.events.ALL);
                 handlers.forEach((handler) => {
                     handler.c.apply(handler.t, args);
                 });
             }
         }
+    }
+
+    private _proxyEventHandlers(event: TEventName): Set<IDfiProxyCallback> {
+        return this._proxyHandlers.get(event);
     }
 }
 

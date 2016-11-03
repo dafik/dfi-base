@@ -26,6 +26,9 @@ class DfiCollection extends DfiEventObject {
     get size() {
         return this.getProp(PROP_COLLECTION).size;
     }
+    get _proxyHandlers() {
+        return this.getProp(PROP_PROXY_CALLBACKS);
+    }
     destroy() {
         this.removeAllListeners();
         this.getProp(PROP_COLLECTION).clear();
@@ -93,7 +96,7 @@ class DfiCollection extends DfiEventObject {
         return entries;
     }
     proxyOn(event, fn, context) {
-        let proxyCallbacks = this.getProp(PROP_PROXY_CALLBACKS);
+        let proxyCallbacks = this._proxyHandlers;
         if (!proxyCallbacks.has(event)) {
             proxyCallbacks.set(event, new Set());
         }
@@ -106,7 +109,7 @@ class DfiCollection extends DfiEventObject {
         return this;
     }
     proxyOff(event, fn, context) {
-        let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
+        let handlers = this._proxyEventHandlers(event);
         if (handlers) {
             handlers.forEach((handler) => {
                 if ((handler.c === fn && handler.t === context) || !fn) {
@@ -114,13 +117,13 @@ class DfiCollection extends DfiEventObject {
                 }
             });
             if (handlers.size === 0) {
-                this.getProp(PROP_PROXY_CALLBACKS).delete(event);
+                this._proxyHandlers.delete(event);
             }
         }
         return this;
     }
     proxyOffAll() {
-        this.getProp(PROP_PROXY_CALLBACKS).forEach((handlers, event) => {
+        this._proxyHandlers.forEach((handlers, event) => {
             handlers.forEach((handler) => {
                 this.proxyOff(event, handler.c, handler.t);
             });
@@ -128,23 +131,26 @@ class DfiCollection extends DfiEventObject {
         return this;
     }
     _onMemberAll(event) {
-        if (this.getProp(PROP_PROXY_CALLBACKS).size > 0) {
-            if (this.getProp(PROP_PROXY_CALLBACKS).has(event)) {
+        if (this._proxyHandlers.size > 0) {
+            if (this._proxyHandlers.has(event)) {
                 let args = Array.prototype.slice.call(arguments);
                 args.shift();
-                let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(event);
+                let handlers = this._proxyHandlers.get(event);
                 handlers.forEach((handler) => {
-                    handler.f.apply(handler.t, args);
+                    handler.c.apply(handler.t, args);
                 });
             }
-            else if (this.getProp(PROP_PROXY_CALLBACKS).has(DfiEventObject.events.ALL)) {
+            else if (this._proxyHandlers.has(DfiEventObject.events.ALL)) {
                 let args = Array.prototype.slice.call(arguments);
-                let handlers = this.getProp(PROP_PROXY_CALLBACKS).get(DfiEventObject.events.ALL);
+                let handlers = this._proxyHandlers.get(DfiEventObject.events.ALL);
                 handlers.forEach((handler) => {
                     handler.c.apply(handler.t, args);
                 });
             }
         }
+    }
+    _proxyEventHandlers(event) {
+        return this._proxyHandlers.get(event);
     }
 }
 const EVENTS = Object.assign(Object.assign({}, DfiEventObject.events), {
