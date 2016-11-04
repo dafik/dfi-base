@@ -113,9 +113,9 @@ abstract class DfiModel extends DfiEventObject {
         this.stampLastUpdate();
         if (silent !== true) {
             if (old === undefined) {
-                this.emit(EVENTS.ADD, this, attribute, value);
+                this.emit(DfiModel.events.ADD, this, attribute, value);
             }
-            this.emit(EVENTS.UPDATE, this, attribute, value, old);
+            this.emit(DfiModel.events.UPDATE, this, attribute, value, old);
         }
         return this;
 
@@ -125,8 +125,8 @@ abstract class DfiModel extends DfiEventObject {
         let value = this.getProp(PROP_ATTRIBUTES).get(attribute);
         let ret = this.getProp(PROP_ATTRIBUTES).delete(attribute);
 
-        this.emit(EVENTS.REMOVE, this, attribute, value);
-        this.emit(EVENTS.UPDATE, this, attribute, value);
+        this.emit(DfiModel.events.REMOVE, this, attribute, value);
+        this.emit(DfiModel.events.UPDATE, this, attribute, value);
         return ret;
     }
 

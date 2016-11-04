@@ -79,12 +79,13 @@ abstract class DfiEventObject extends DfiObject {
         }
 
         if (this._ee.listeners(DfiEventObject.events.ALL, true)) {
-            if (this._ee.listeners(event, true)) {
-                this._ee.emit.apply(this._ee, arguments);
+            let emitter = this._ee; // event listener can destroy the object and his emitter property, so it must be local reference.
+            if (emitter.listeners(event, true)) {
+                emitter.emit.apply(this._ee, arguments);
             }
             let newArgs = Array.prototype.slice.call(arguments);
             newArgs.unshift(EVENTS.ALL);
-            ret = this._ee.emit.apply(this._ee, newArgs);
+            ret = emitter.emit.apply(emitter, newArgs);
         } else {
             ret = this._ee.emit.apply(this._ee, arguments);
         }
