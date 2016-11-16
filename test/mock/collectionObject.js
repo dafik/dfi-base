@@ -29,10 +29,10 @@ class TestCollectionObject extends DfiCollection {
         return super.proxyOn(event, fn, context);
     }
     proxyOff(event, fn, context) {
-        super.proxyOff(event, fn, context);
+        return super.proxyOff(event, fn, context);
     }
     proxyOffAll() {
-        super.proxyOffAll();
+        return super.proxyOffAll();
     }
 }
 module.exports = TestCollectionObject;

@@ -1,4 +1,5 @@
 import DfiModel = require("../../src/dfiModel");
+import {IDfiBaseModelConfig, ITestModelObjectAttribs} from "../../src/dfiInterfaces";
 
 class TestModelObject extends DfiModel {
 
@@ -6,6 +7,10 @@ class TestModelObject extends DfiModel {
         ["a", "a"],
         ["b", "b"]
     ]);
+
+    constructor(attributes: ITestModelObjectAttribs, options?: IDfiBaseModelConfig) {
+        super(attributes, options);
+    }
 
     public get(attribute: string): any {
         return super.get(attribute);

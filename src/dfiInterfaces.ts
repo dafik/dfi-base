@@ -10,7 +10,7 @@ export interface IDfiBaseModelConfig extends IDfiBaseObjectConfig {
 
 export interface IDfiBaseCollectionConfig<M> extends IDfiBaseObjectConfig {
     idField?: string;
-    model?: typeof M;
+    model?: new (...args: any[]) => M;
 }
 
 // events
@@ -52,7 +52,13 @@ export interface IDfiCallbackResult extends IDfiCallbackError {
 }
 
 export interface IDfiProxyCallback {
-    c: Function
+    c: Function;
     t?: any;
 }
 
+// test
+
+export interface ITestModelObjectAttribs extends IDfiBaseModelAttribs {
+    a?: string;
+    b?: string;
+}

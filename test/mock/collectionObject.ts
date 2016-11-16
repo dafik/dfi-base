@@ -2,7 +2,7 @@ import DfiCollection = require("../../src/dfiCollection");
 import {TEventName} from "../../src/dfiInterfaces";
 import TestModelObject = require("./modelObject");
 
-class TestCollectionObject extends DfiCollection<TestModelObject> {
+class TestCollectionObject extends DfiCollection<any, TestModelObject> {
 
     public has(element: any|TestModelObject): boolean {
         return super.has(element);
@@ -12,7 +12,7 @@ class TestCollectionObject extends DfiCollection<TestModelObject> {
         return super.get(id);
     }
 
-    public add(element: TestModelObject): Map<any, any> {
+    public add(element: TestModelObject): this {
         return super.add(element);
     }
 
@@ -28,7 +28,7 @@ class TestCollectionObject extends DfiCollection<TestModelObject> {
         return super.clear();
     }
 
-    public forEach<K, V>(fn: (value: V, index: K, map: Map<K, V>) => void, thisArg?: any): void {
+    public forEach(fn: (value: TestModelObject, index: any, map: Map<any, TestModelObject>)=>void, thisArg?: any): void {
         super.forEach(fn, thisArg);
     }
 
@@ -40,12 +40,12 @@ class TestCollectionObject extends DfiCollection<TestModelObject> {
         return super.proxyOn(event, fn, context);
     }
 
-    public proxyOff(event: TEventName, fn: Function, context?: any): void {
-        super.proxyOff(event, fn, context);
+    public proxyOff(event: TEventName, fn: Function, context?: any): this {
+        return super.proxyOff(event, fn, context);
     }
 
-    public proxyOffAll(): void {
-        super.proxyOffAll();
+    public proxyOffAll(): this {
+        return super.proxyOffAll();
     }
 }
 

@@ -1,6 +1,9 @@
 "use strict";
 const DfiModel = require("../../src/dfiModel");
 class TestModelObject extends DfiModel {
+    constructor(attributes, options) {
+        super(attributes, options);
+    }
     get(attribute) {
         return super.get(attribute);
     }
