@@ -1,5 +1,5 @@
 "use strict";
-const DebugLogger = require("local-dfi-debug-logger/debugLogger");
+const local_dfi_debug_logger_1 = require("local-dfi-debug-logger");
 class DfiUtil {
     static maybeCallbackOnce(fn, context, err, response) {
         if (typeof fn === "function") {
@@ -25,13 +25,13 @@ class DfiUtil {
         return logger;
     }
     static *_entries(obj) {
-        for (let key in obj) {
+        for (const key in obj) {
             if (obj.hasOwnProperty(key)) {
                 yield [key, obj[key]];
             }
         }
     }
 }
-const logger = new DebugLogger("dfi:util");
+const logger = new local_dfi_debug_logger_1.default("dfi:util");
 module.exports = DfiUtil;
 //# sourceMappingURL=dfiUtil.js.map

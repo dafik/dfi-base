@@ -1,8 +1,7 @@
+import DebugLogger from "local-dfi-debug-logger";
 import {IDfiBaseObjectConfig} from "./dfiInterfaces";
-import DebugLogger = require("local-dfi-debug-logger");
 
-let privateProperties: WeakMap<DfiObject, Map<any, any>> = new WeakMap();
-
+const privateProperties: WeakMap<DfiObject, Map<any, any>> = new WeakMap();
 const PROP_LOGGER = "logger";
 
 abstract class DfiObject {
@@ -19,7 +18,7 @@ abstract class DfiObject {
 
         this.setProp("logger", new DebugLogger((options.loggerName ? options.loggerName : "dfi:object:") + this.constructor.name));
 
-        for (let property in options) {
+        for (const property in options) {
             if (options.hasOwnProperty(property)) {
                 if (property !== "loggerName") {
                     this.setProp(property, options[property]);
@@ -35,9 +34,9 @@ abstract class DfiObject {
         this.destroyed = true;
     }
 
-    public toPlain(): Object {
-        let prop = {};
-        let p = privateProperties.get(this);
+    public toPlain(): object {
+        const prop = {};
+        const p = privateProperties.get(this);
         if (p) {
             p.forEach((value, name) => {
                 if (name !== "attributes") {

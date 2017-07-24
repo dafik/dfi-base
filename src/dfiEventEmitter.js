@@ -1,20 +1,6 @@
 "use strict";
-let has = Object.prototype.hasOwnProperty;
-/**
- * Representation of a single EventEmitter function.
- *
- * @param {Function} fn Event handler to be called.
- * @param {*} context Context for function execution.
- * @param {Boolean} [once=false] Only emit once
- * @api private
- */
-class EE {
-    constructor(fn, context, once) {
-        this.fn = fn;
-        this.context = context;
-        this.once = once || false;
-    }
-}
+const EE_1 = require("./EE");
+const has = Object.prototype.hasOwnProperty;
 /**
  * Minimal EventEmitter interface that is molded against the Node.js
  * EventEmitter interface.
@@ -25,8 +11,8 @@ class EventEmitter {
      * listeners.
      */
     eventNames(exists) {
-        let events = this._events;
-        let names = [];
+        const events = this._events;
+        const names = [];
         let name;
         if (!events) {
             return names;
@@ -37,7 +23,7 @@ class EventEmitter {
             }
         }
         if (Object.getOwnPropertySymbols) {
-            let symbols = Object.getOwnPropertySymbols(events);
+            const symbols = Object.getOwnPropertySymbols(events);
             if (!exists) {
                 symbols.forEach((elem, index) => {
                     symbols[index] = Symbol.prototype.toString.call(elem);
@@ -55,7 +41,7 @@ class EventEmitter {
      * @returns {Array|Boolean}
      */
     listeners(event, exists) {
-        let available = this._events && this._events[event];
+        const available = this._events && this._events[event];
         if (exists) {
             return !!available;
         }
@@ -65,15 +51,14 @@ class EventEmitter {
         if (available.fn) {
             return [available.fn];
         }
-        let l = available.length;
-        let ee = new Array(l);
+        const l = available.length;
+        const ee = new Array(l);
         let i = 0;
         for (i; i < l; i++) {
             ee[i] = available[i].fn;
         }
         return ee;
     }
-    ;
     /**
      * Emit an event to all registered event listeners.
      *
@@ -91,8 +76,8 @@ class EventEmitter {
         if (!this._events || !this._events[event]) {
             return false;
         }
-        let listeners = this._events[event];
-        let len = arguments.length;
+        const listeners = this._events[event];
+        const len = arguments.length;
         let args1;
         let i;
         if ("function" === typeof listeners.fn) {
@@ -120,7 +105,7 @@ class EventEmitter {
             }
         }
         else {
-            let length = listeners.length;
+            const length = listeners.length;
             let j;
             for (i = 0; i < length; i++) {
                 if (listeners[i].once) {
@@ -148,7 +133,6 @@ class EventEmitter {
         }
         return true;
     }
-    ;
     /**
      * Register a new EventListener for the given event.
      *
@@ -158,7 +142,7 @@ class EventEmitter {
      * @api public
      */
     on(event, fn, context) {
-        let listener = new EE(fn, context || this);
+        const listener = new EE_1.default(fn, context || this);
         if (!this._events) {
             this._events = Object.create(null);
         }
@@ -175,7 +159,6 @@ class EventEmitter {
         }
         return this;
     }
-    ;
     /**
      * Add an EventListener that's only called once.
      *
@@ -185,7 +168,7 @@ class EventEmitter {
      * @api public
      */
     once(event, fn, context) {
-        let listener = new EE(fn, context || this, true);
+        const listener = new EE_1.default(fn, context || this, true);
         if (!this._events) {
             this._events = Object.create(null);
         }
@@ -204,7 +187,6 @@ class EventEmitter {
         }
         return this;
     }
-    ;
     /**
      * Remove event listeners.
      *
@@ -218,8 +200,8 @@ class EventEmitter {
         if (!this._events || !this._events[event]) {
             return this;
         }
-        let listeners = this._events[event];
-        let events = [];
+        const listeners = this._events[event];
+        const events = [];
         if (fn) {
             if (listeners.fn) {
                 if (listeners.fn !== fn
@@ -249,7 +231,6 @@ class EventEmitter {
         }
         return this;
     }
-    ;
     /**
      * Remove all listeners or only the listeners for the specified event.
      *
@@ -267,7 +248,6 @@ class EventEmitter {
         }
         return this;
     }
-    ;
 }
 module.exports = EventEmitter;
 //# sourceMappingURL=dfiEventEmitter.js.map

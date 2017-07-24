@@ -20,7 +20,7 @@ class TestModelObject extends DfiModel {
         return super.has(attribute);
     }
 
-    public set(attribute: string|Object, value: any, silent?: boolean): this {
+    public set(attribute: string|object, value: any, silent?: boolean): this {
         return super.set(attribute, value, silent);
     }
 

@@ -1,41 +1,8 @@
 import {TEventName} from "./dfiInterfaces";
+import EE from "./EE";
+import {NullProto} from "./NullProto";
 
-let has = Object.prototype.hasOwnProperty;
-
-/**
- * Representation of a single EventEmitter function.
- *
- * @param {Function} fn Event handler to be called.
- * @param {*} context Context for function execution.
- * @param {Boolean} [once=false] Only emit once
- * @api private
- */
-class EE {
-    private fn;
-    private context;
-    private once;
-
-    constructor(fn: Function, context?: any, once?: boolean) {
-        this.fn = fn;
-        this.context = context;
-        this.once = once || false;
-    }
-}
-declare class NullProto {
-    private "constructor": NullProto;
-    // noinspection TsLint
-    private toString: any;
-    // noinspection TsLint
-    private toLocaleString: any;
-    // noinspection TsLint
-    private valueOf: any;
-    // noinspection TsLint
-    private hasOwnProperty: any;
-    // noinspection TsLint
-    private isPrototypeOf: any;
-    // noinspection TsLint
-    private propertyIsEnumerable: any;
-}
+const has = Object.prototype.hasOwnProperty;
 
 /**
  * Minimal EventEmitter interface that is molded against the Node.js
@@ -49,9 +16,9 @@ class EventEmitter {
      * Return an array listing the events for which the emitter has registered
      * listeners.
      */
-    public eventNames(exists?: boolean): Array<TEventName> {
-        let events = this._events;
-        let names = [];
+    public eventNames(exists?: boolean): TEventName[] {
+        const events = this._events;
+        const names = [];
         let name;
 
         if (!events) {
@@ -64,7 +31,7 @@ class EventEmitter {
             }
         }
         if (Object.getOwnPropertySymbols) {
-            let symbols = Object.getOwnPropertySymbols(events);
+            const symbols = Object.getOwnPropertySymbols(events);
             if (!exists) {
                 symbols.forEach((elem, index) => {
                     symbols[index] = Symbol.prototype.toString.call(elem);
@@ -84,8 +51,8 @@ class EventEmitter {
      * @param {Boolean} exists We only need to know if there are listeners.
      * @returns {Array|Boolean}
      */
-    public listeners(event?: TEventName, exists?: boolean): Function[]/* Array<EE>*/ | boolean {
-        let available = this._events && this._events[event];
+    public listeners(event?: TEventName, exists?: boolean): Array<(...args) => void>/* Array<EE>*/ | boolean {
+        const available = this._events && this._events[event];
 
         if (exists) {
             return !!available;
@@ -97,8 +64,8 @@ class EventEmitter {
             return [available.fn];
         }
 
-        let l = available.length;
-        let ee = new Array(l);
+        const l = available.length;
+        const ee = new Array(l);
         let i = 0;
 
         for (i; i < l; i++) {
@@ -106,7 +73,7 @@ class EventEmitter {
         }
 
         return ee;
-    };
+    }
 
     /**
      * Emit an event to all registered event listeners.
@@ -126,8 +93,8 @@ class EventEmitter {
             return false;
         }
 
-        let listeners = this._events[event];
-        let len = arguments.length;
+        const listeners = this._events[event];
+        const len = arguments.length;
         let args1;
         let i;
 
@@ -157,7 +124,7 @@ class EventEmitter {
                     listeners.fn.apply(listeners.context, args1);
             }
         } else {
-            let length = listeners.length;
+            const length = listeners.length;
             let j;
 
             for (i = 0; i < length; i++) {
@@ -188,7 +155,7 @@ class EventEmitter {
         }
 
         return true;
-    };
+    }
 
     /**
      * Register a new EventListener for the given event.
@@ -198,8 +165,8 @@ class EventEmitter {
      * @param {*} [context=this] The context of the function.
      * @api public
      */
-    public on(event: TEventName, fn: Function, context?: any): this {
-        let listener = new EE(fn, context || this);
+    public on(event: TEventName, fn: (...args) => void, context?: any): this {
+        const listener = new EE(fn, context || this);
 
         if (!this._events) {
             this._events = Object.create(null);
@@ -214,7 +181,7 @@ class EventEmitter {
             }
         }
         return this;
-    };
+    }
 
     /**
      * Add an EventListener that's only called once.
@@ -224,8 +191,8 @@ class EventEmitter {
      * @param {*} [context=this] The context of the function.
      * @api public
      */
-    public once(event: TEventName, fn: Function, context?: any): EventEmitter {
-        let listener = new EE(fn, context || this, true);
+    public once(event: TEventName, fn: (...args) => void, context?: any): EventEmitter {
+        const listener = new EE(fn, context || this, true);
         if (!this._events) {
             this._events = Object.create(null);
         }
@@ -242,7 +209,7 @@ class EventEmitter {
         }
 
         return this;
-    };
+    }
 
     /**
      * Remove event listeners.
@@ -253,13 +220,13 @@ class EventEmitter {
      * @param {Boolean} once Only remove once listeners.
      * @api public
      */
-    public removeListener(event: TEventName, fn?: Function, context?: any, once?: boolean) {
+    public removeListener(event: TEventName, fn?: (...args) => void, context?: any, once?: boolean) {
         if (!this._events || !this._events[event]) {
             return this;
         }
 
-        let listeners = this._events[event];
-        let events = [];
+        const listeners = this._events[event];
+        const events = [];
 
         if (fn) {
             if (listeners.fn) {
@@ -293,7 +260,7 @@ class EventEmitter {
         }
 
         return this;
-    };
+    }
 
     /**
      * Remove all listeners or only the listeners for the specified event.
@@ -312,7 +279,7 @@ class EventEmitter {
         }
 
         return this;
-    };
+    }
 }
 
-export  = EventEmitter;
+export = EventEmitter;

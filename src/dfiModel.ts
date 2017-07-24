@@ -62,21 +62,21 @@ abstract class DfiModel extends DfiEventObject {
         this.destroyed = true;
     }
 
-    public toJSON(): Object {
-        let attr = {id: this.id};
+    public toJSON(): object {
+        const attr = {id: this.id};
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
             attr[name] = value;
         });
         return attr;
     }
 
-    public toPlain(): Object {
-        let attr = {};
+    public toPlain(): object {
+        const attr = {};
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
             attr[name] = value;
         });
 
-        let prop = super.toPlain();
+        const prop = super.toPlain();
         return {attr, prop};
     }
 
@@ -93,10 +93,10 @@ abstract class DfiModel extends DfiEventObject {
         return this.getProp(PROP_ATTRIBUTES).has(attribute);
     }
 
-    protected set(attribute: string | Object, value: any, silent?: boolean): this {
+    protected set(attribute: string | object, value: any, silent?: boolean): this {
         if (typeof attribute === "object") {
             silent = value;
-            for (let attr in attribute) {
+            for (const attr in attribute) {
                 if (attribute.hasOwnProperty(attr)) {
                     this.set(attr, attribute[attr], silent);
                 }
@@ -104,7 +104,7 @@ abstract class DfiModel extends DfiEventObject {
             return this;
         }
 
-        let old = this.get(attribute);
+        const old = this.get(attribute);
         if (old === value) {
             return;
         }
@@ -122,8 +122,8 @@ abstract class DfiModel extends DfiEventObject {
     }
 
     protected remove(attribute) {
-        let value = this.getProp(PROP_ATTRIBUTES).get(attribute);
-        let ret = this.getProp(PROP_ATTRIBUTES).delete(attribute);
+        const value = this.getProp(PROP_ATTRIBUTES).get(attribute);
+        const ret = this.getProp(PROP_ATTRIBUTES).delete(attribute);
 
         this.emit(DfiModel.events.REMOVE, this, attribute, value);
         this.emit(DfiModel.events.UPDATE, this, attribute, value);
@@ -134,12 +134,12 @@ abstract class DfiModel extends DfiEventObject {
         this.setProp(PROP_LAST_UPDATE, Date.now());
     }
 
-    private _getAttributeMap(attributes: Object): Map<string, string> {
+    private _getAttributeMap(attributes: object): Map<string, string> {
         if ((this.constructor as typeof DfiModel).map) {
             return (this.constructor as typeof DfiModel).map;
         } else {
-            let result = new Map();
-            let keys = Object.keys(attributes);
+            const result = new Map();
+            const keys = Object.keys(attributes);
             for (let i = 0, length = keys.length; i < length; i++) {
                 result.set(keys[i], keys[i]);
             }
@@ -148,13 +148,12 @@ abstract class DfiModel extends DfiEventObject {
     }
 }
 
-export =  DfiModel;
+export = DfiModel;
 
-const EVENTS: IDfiBaseModelEvents = Object.assign(
-    Object.assign({}, DfiEventObject.events),
-    {
-        ADD: Symbol(DfiModel.prototype.constructor.name + ":add"),
-        REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"),
-        UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update")
-    }
-);
+const EVENTS: IDfiBaseModelEvents = {
+    ...DfiEventObject.events,
+
+    ADD: Symbol(DfiModel.prototype.constructor.name + ":add"),
+    REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"),
+    UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update")
+};

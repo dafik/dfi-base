@@ -36,7 +36,7 @@ class DfiCollection extends DfiEventObject {
         super.destroy();
     }
     toJSON() {
-        let out = {
+        const out = {
             entries: Object.create(null),
             size: this.getProp(PROP_COLLECTION).size
         };
@@ -46,7 +46,7 @@ class DfiCollection extends DfiEventObject {
         return out;
     }
     has(element) {
-        let id = (this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL)) ? element.id : element;
+        const id = (this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL)) ? element.id : element;
         return this.getProp(PROP_COLLECTION).has(id);
     }
     get(id) {
@@ -60,7 +60,7 @@ class DfiCollection extends DfiEventObject {
         return this;
     }
     remove(element) {
-        let id = this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL) ? element.id : element;
+        const id = this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL) ? element.id : element;
         element = this.getProp(PROP_COLLECTION).get(id);
         let res = false;
         if (element) {
@@ -72,9 +72,9 @@ class DfiCollection extends DfiEventObject {
         return res;
     }
     keys() {
-        let keys = [];
-        let iterator = this.getProp(PROP_COLLECTION).keys();
-        for (let key of iterator) {
+        const keys = [];
+        const iterator = this.getProp(PROP_COLLECTION).keys();
+        for (const key of iterator) {
             keys.push(key);
         }
         return keys;
@@ -88,28 +88,28 @@ class DfiCollection extends DfiEventObject {
         return this.getProp(PROP_COLLECTION).forEach(fn, thisArg);
     }
     toArray() {
-        let entries = [];
-        let iterator = this.getProp(PROP_COLLECTION).values();
-        for (let value of iterator) {
+        const entries = [];
+        const iterator = this.getProp(PROP_COLLECTION).values();
+        for (const value of iterator) {
             entries.push(value);
         }
         return entries;
     }
     proxyOn(event, fn, context) {
-        let proxyCallbacks = this._proxyHandlers;
+        const proxyCallbacks = this._proxyHandlers;
         if (!proxyCallbacks.has(event)) {
             proxyCallbacks.set(event, new Set());
         }
-        let assigner = {
+        const assigner = {
             c: fn,
             t: context
         };
-        let handlers = proxyCallbacks.get(event);
+        const handlers = proxyCallbacks.get(event);
         handlers.add(assigner);
         return this;
     }
     proxyOff(event, fn, context) {
-        let handlers = this._proxyEventHandlers(event);
+        const handlers = this._proxyEventHandlers(event);
         if (handlers) {
             handlers.forEach((handler) => {
                 if ((handler.c === fn && handler.t === context) || !fn) {
@@ -133,16 +133,16 @@ class DfiCollection extends DfiEventObject {
     _onMemberAll(event) {
         if (this._proxyHandlers.size > 0) {
             if (this._proxyHandlers.has(event)) {
-                let args = Array.prototype.slice.call(arguments);
+                const args = Array.prototype.slice.call(arguments);
                 args.shift();
-                let handlers = this._proxyHandlers.get(event);
+                const handlers = this._proxyHandlers.get(event);
                 handlers.forEach((handler) => {
                     handler.c.apply(handler.t, args);
                 });
             }
             else if (this._proxyHandlers.has(DfiEventObject.events.ALL)) {
-                let args = Array.prototype.slice.call(arguments);
-                let handlers = this._proxyHandlers.get(DfiEventObject.events.ALL);
+                const args = Array.prototype.slice.call(arguments);
+                const handlers = this._proxyHandlers.get(DfiEventObject.events.ALL);
                 handlers.forEach((handler) => {
                     handler.c.apply(handler.t, args);
                 });
@@ -153,10 +153,6 @@ class DfiCollection extends DfiEventObject {
         return this._proxyHandlers.get(event);
     }
 }
-const EVENTS = Object.assign(Object.assign({}, DfiEventObject.events), {
-    ADD: Symbol(DfiCollection.prototype.constructor.name + ":add"),
-    REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":delete"),
-    UPDATE: Symbol(DfiCollection.prototype.constructor.name + ":update")
-});
+const EVENTS = Object.assign({}, DfiEventObject.events, { ADD: Symbol(DfiCollection.prototype.constructor.name + ":add"), REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":delete"), UPDATE: Symbol(DfiCollection.prototype.constructor.name + ":update") });
 module.exports = DfiCollection;
 //# sourceMappingURL=dfiCollection.js.map

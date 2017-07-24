@@ -15,6 +15,7 @@
   "typings": "index.ts",
   "devDependencies": {
     "@types/mocha": "^2.2.32",
+    "@types/node": "*",
     "mocha": "^3.1.2"
   }
 }

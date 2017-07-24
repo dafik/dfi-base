@@ -1,13 +1,16 @@
 "use strict";
-const DebugLogger = require("local-dfi-debug-logger");
-let privateProperties = new WeakMap();
+const local_dfi_debug_logger_1 = require("local-dfi-debug-logger");
+const privateProperties = new WeakMap();
 const PROP_LOGGER = "logger";
 class DfiObject {
+    get logger() {
+        return privateProperties.get(this).get(PROP_LOGGER);
+    }
     constructor(options) {
         privateProperties.set(this, new Map());
         options = options || {};
-        this.setProp("logger", new DebugLogger((options.loggerName ? options.loggerName : "dfi:object:") + this.constructor.name));
-        for (let property in options) {
+        this.setProp("logger", new local_dfi_debug_logger_1.default((options.loggerName ? options.loggerName : "dfi:object:") + this.constructor.name));
+        for (const property in options) {
             if (options.hasOwnProperty(property)) {
                 if (property !== "loggerName") {
                     this.setProp(property, options[property]);
@@ -15,17 +18,14 @@ class DfiObject {
             }
         }
     }
-    get logger() {
-        return privateProperties.get(this).get(PROP_LOGGER);
-    }
     destroy() {
         privateProperties.get(this).clear();
         privateProperties.delete(this);
         this.destroyed = true;
     }
     toPlain() {
-        let prop = {};
-        let p = privateProperties.get(this);
+        const prop = {};
+        const p = privateProperties.get(this);
         if (p) {
             p.forEach((value, name) => {
                 if (name !== "attributes") {

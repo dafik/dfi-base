@@ -11,6 +11,15 @@ const PROP_ID_ATTRIBUTE = "idAttribute";
 const PROP_ID = "id";
 const PROP_LAST_UPDATE = "lastUpdate";
 class DfiModel extends DfiEventObject {
+    static get events() {
+        return EVENTS;
+    }
+    get id() {
+        return this.getProp(PROP_ID);
+    }
+    get lastUpdate() {
+        return this.getProp(PROP_LAST_UPDATE);
+    }
     constructor(attributes, options) {
         options = options || {};
         if (!options.loggerName) {
@@ -34,33 +43,24 @@ class DfiModel extends DfiEventObject {
         }
         this.stampLastUpdate();
     }
-    static get events() {
-        return EVENTS;
-    }
-    get id() {
-        return this.getProp(PROP_ID);
-    }
-    get lastUpdate() {
-        return this.getProp(PROP_LAST_UPDATE);
-    }
     destroy() {
         this.getProp(PROP_ATTRIBUTES).clear();
         super.destroy();
         this.destroyed = true;
     }
     toJSON() {
-        let attr = { id: this.id };
+        const attr = { id: this.id };
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
             attr[name] = value;
         });
         return attr;
     }
     toPlain() {
-        let attr = {};
+        const attr = {};
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
             attr[name] = value;
         });
-        let prop = super.toPlain();
+        const prop = super.toPlain();
         return { attr, prop };
     }
     get(attribute) {
@@ -77,14 +77,14 @@ class DfiModel extends DfiEventObject {
     set(attribute, value, silent) {
         if (typeof attribute === "object") {
             silent = value;
-            for (let attr in attribute) {
+            for (const attr in attribute) {
                 if (attribute.hasOwnProperty(attr)) {
                     this.set(attr, attribute[attr], silent);
                 }
             }
             return this;
         }
-        let old = this.get(attribute);
+        const old = this.get(attribute);
         if (old === value) {
             return;
         }
@@ -99,8 +99,8 @@ class DfiModel extends DfiEventObject {
         return this;
     }
     remove(attribute) {
-        let value = this.getProp(PROP_ATTRIBUTES).get(attribute);
-        let ret = this.getProp(PROP_ATTRIBUTES).delete(attribute);
+        const value = this.getProp(PROP_ATTRIBUTES).get(attribute);
+        const ret = this.getProp(PROP_ATTRIBUTES).delete(attribute);
         this.emit(DfiModel.events.REMOVE, this, attribute, value);
         this.emit(DfiModel.events.UPDATE, this, attribute, value);
         return ret;
@@ -113,8 +113,8 @@ class DfiModel extends DfiEventObject {
             return this.constructor.map;
         }
         else {
-            let result = new Map();
-            let keys = Object.keys(attributes);
+            const result = new Map();
+            const keys = Object.keys(attributes);
             for (let i = 0, length = keys.length; i < length; i++) {
                 result.set(keys[i], keys[i]);
             }
@@ -122,10 +122,6 @@ class DfiModel extends DfiEventObject {
         }
     }
 }
-const EVENTS = Object.assign(Object.assign({}, DfiEventObject.events), {
-    ADD: Symbol(DfiModel.prototype.constructor.name + ":add"),
-    REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"),
-    UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update")
-});
+const EVENTS = Object.assign({}, DfiEventObject.events, { ADD: Symbol(DfiModel.prototype.constructor.name + ":add"), REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"), UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update") });
 module.exports = DfiModel;
 //# sourceMappingURL=dfiModel.js.map

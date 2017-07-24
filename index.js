@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const DfiObject = require("./src/dfiObject");
 exports.DfiObject = DfiObject;
 const DfiEventObject = require("./src/dfiEventObject");

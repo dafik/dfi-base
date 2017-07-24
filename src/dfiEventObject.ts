@@ -1,6 +1,6 @@
 import EventEmitter = require("./dfiEventEmitter");
-import {IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
 import DfiObject = require("./dfiObject");
+import {IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
 
 const PROP_MAX_EVENTS = "maxEvents";
 const PROP_EMITTER = "emitter";
@@ -36,13 +36,13 @@ abstract class DfiEventObject extends DfiObject {
         super.destroy();
     }
 
-    public on(event: TEventName, fn: Function, context?: any): EventEmitter {
+    public on(event: TEventName, fn: (...args) => void, context?: any): EventEmitter {
         if (event === undefined) {
             throw new Error("undefined event");
         } else if (typeof event !== "symbol") {
             this.logger.warn('on event not symbol "%s"', event);
         }
-        let ret = this._ee.on(event, fn, context);
+        const ret = this._ee.on(event, fn, context);
 
         if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
@@ -50,14 +50,14 @@ abstract class DfiEventObject extends DfiObject {
         return ret;
     }
 
-    public once(event: TEventName, fn: Function, context?: any): EventEmitter {
+    public once(event: TEventName, fn: (...args) => void, context?: any): EventEmitter {
         if (event === undefined) {
             throw new Error("undefined event");
         } else if (typeof event !== "symbol") {
             this.logger.warn('once event not symbol "%s"', event);
         }
 
-        let ret = this._ee.once(event, fn, context);
+        const ret = this._ee.once(event, fn, context);
 
         if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
@@ -79,11 +79,11 @@ abstract class DfiEventObject extends DfiObject {
         }
 
         if (this._ee.listeners(DfiEventObject.events.ALL, true)) {
-            let emitter = this._ee; // event listener can destroy the object and his emitter property, so it must be local reference.
+            const emitter = this._ee; // event listener can destroy the object and his emitter property, so it must be local reference.
             if (emitter.listeners(event, true)) {
                 emitter.emit.apply(this._ee, arguments);
             }
-            let newArgs = Array.prototype.slice.call(arguments);
+            const newArgs = Array.prototype.slice.call(arguments);
             newArgs.unshift(EVENTS.ALL);
             ret = emitter.emit.apply(emitter, newArgs);
         } else {
@@ -92,7 +92,7 @@ abstract class DfiEventObject extends DfiObject {
         return ret;
     }
 
-    public off(event: TEventName, fn?: Function, context?: any, once?: boolean): EventEmitter {
+    public off(event: TEventName, fn?: (...args) => void, context?: any, once?: boolean): EventEmitter {
 
         if (event === undefined) {
             throw new Error("undefined event");
@@ -112,12 +112,9 @@ abstract class DfiEventObject extends DfiObject {
     }
 }
 
-const EVENTS: IDfiBaseEventObjectEvents = Object.assign(
-    {},
-    {
-        ALL: Symbol(DfiEventObject.prototype.constructor.name + ":all"),
-        DESTROY: Symbol(DfiEventObject.prototype.constructor.name + ":destroy")
-    }
-);
+const EVENTS: IDfiBaseEventObjectEvents = {
+    ALL: Symbol(DfiEventObject.prototype.constructor.name + ":all"),
+    DESTROY: Symbol(DfiEventObject.prototype.constructor.name + ":destroy")
+};
 
 export = DfiEventObject;

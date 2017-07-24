@@ -5,51 +5,43 @@ import TestCollectionObject = require("./mock/collectionObject");
 describe("collection", () => {
 
     it("logger name", (done) => {
-        let loggerName = "testLogger:";
-        let test = new TestCollectionObject({loggerName, model: TestModelObject});
+        const loggerName = "testLogger:";
+        const test = new TestCollectionObject({loggerName, model: TestModelObject});
 
         assert.ok(test.logger.name.match(loggerName) !== null);
         done();
     });
 
     it("toPlain", (done) => {
-        let loggerName = "testLogger:";
-        let test = new TestCollectionObject({loggerName});
+        const loggerName = "testLogger:";
+        const test = new TestCollectionObject({loggerName});
 
-        let expected = JSON.stringify({
-            logger: {
-                _loggers: {},
-                _name: "testLogger:TestCollectionObject"
-            },
-            emitter: {},
-            collection: {},
-            proxyCallbacks: {}
-        });
+        const expected = '{"logger":{"_loggers":{},"_name":"testLogger:TestCollectionObject"},"maxEvents":10,"emitter":{},"collection":{},"proxyCallbacks":{}}';
 
         assert.equal(JSON.stringify(test.toPlain()), expected);
         done();
     });
 
-    it("setgetremove", (done) => {
+    it("setGetRemove", (done) => {
 
-        let test = new TestModelObject({a: "a", b: "b"});
-        let colection = new TestCollectionObject({model: TestModelObject});
+        const test = new TestModelObject({a: "a", b: "b"});
+        const collection = new TestCollectionObject({model: TestModelObject});
 
-        assert.equal(colection.get(test.id), undefined);
+        assert.equal(collection.get(test.id), undefined);
 
-        colection.add(test);
+        collection.add(test);
 
-        assert.equal(colection.get(test.id), test);
-        colection.remove(test);
+        assert.equal(collection.get(test.id), test);
+        collection.remove(test);
 
-        assert.equal(colection.get(test.id), undefined);
+        assert.equal(collection.get(test.id), undefined);
 
-        colection.add(test);
-        assert.equal(colection.get(test.id), test);
-        colection.clear();
+        collection.add(test);
+        assert.equal(collection.get(test.id), test);
+        collection.clear();
 
-        assert.equal(colection.get(test.id), undefined);
-        assert.equal(colection.size, 0);
+        assert.equal(collection.get(test.id), undefined);
+        assert.equal(collection.size, 0);
 
         done();
 

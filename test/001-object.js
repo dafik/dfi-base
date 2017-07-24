@@ -1,17 +1,18 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const TestObject = require("./mock/object");
 const assert = require("assert");
 describe("object", () => {
     it("logger name", (done) => {
-        let loggerName = "testLogger:";
-        let test = new TestObject({ loggerName });
+        const loggerName = "testLogger:";
+        const test = new TestObject({ loggerName });
         assert.ok(test.logger.name.match(loggerName) !== null);
         done();
     });
     it("toPlain", (done) => {
-        let loggerName = "testLogger:";
-        let test = new TestObject({ loggerName });
-        let expected = JSON.stringify({
+        const loggerName = "testLogger:";
+        const test = new TestObject({ loggerName });
+        const expected = JSON.stringify({
             logger: {
                 _loggers: {},
                 _name: "testLogger:TestObject"
@@ -20,11 +21,11 @@ describe("object", () => {
         assert.equal(JSON.stringify(test.toPlain()), expected);
         done();
     });
-    it("setgetremove", (done) => {
-        let key = "testKey";
-        let value = "testValue";
-        let loggerName = "testLogger:";
-        let test = new TestObject({ loggerName });
+    it("setGetRemove", (done) => {
+        const key = "testKey";
+        const value = "testValue";
+        const loggerName = "testLogger:";
+        const test = new TestObject({ loggerName });
         assert.equal(test.hasProp(key), false);
         assert.equal(test.getProp(key), undefined);
         test.setProp(key, value);
