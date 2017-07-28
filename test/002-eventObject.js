@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const TestEventObject = require("./mock/eventObject");
+const eventObject_1 = require("./mock/eventObject");
 const assert = require("assert");
 describe("event", () => {
     it("logger name", (done) => {
         const loggerName = "testLogger:";
-        const test = new TestEventObject({ loggerName });
+        const test = new eventObject_1.default({ loggerName });
         assert.ok(test.logger.name.match(loggerName) !== null);
         done();
     });
     it("toPlain", (done) => {
         const loggerName = "testLogger:";
-        const test = new TestEventObject({ loggerName });
+        const test = new eventObject_1.default({ loggerName });
         const expected = '{"logger":{"_loggers":{},"_name":"testLogger:TestEventObject"},"maxEvents":10,"emitter":{}}';
         assert.equal(JSON.stringify(test.toPlain()), expected);
         done();
@@ -19,7 +19,7 @@ describe("event", () => {
     it("on", (done) => {
         const event = Symbol("event");
         const loggerName = "testLogger:";
-        const test = new TestEventObject({ loggerName });
+        const test = new eventObject_1.default({ loggerName });
         test.on(event, () => {
             done();
         });
@@ -29,7 +29,7 @@ describe("event", () => {
         const event = Symbol("event");
         const loggerName = "testLogger:";
         let eventComes = 0;
-        const test = new TestEventObject({ loggerName });
+        const test = new eventObject_1.default({ loggerName });
         test.once(event, () => {
             eventComes++;
         });
@@ -43,7 +43,7 @@ describe("event", () => {
         const event = Symbol("event");
         const loggerName = "testLogger:";
         let eventComes = 0;
-        const test = new TestEventObject({ loggerName });
+        const test = new eventObject_1.default({ loggerName });
         test.on(event, () => {
             eventComes++;
         });
@@ -60,7 +60,7 @@ describe("event", () => {
         const event = Symbol("event");
         const loggerName = "testLogger:";
         let eventComes = 0;
-        const test = new TestEventObject({ loggerName });
+        const test = new eventObject_1.default({ loggerName });
         test.on(event, () => {
             eventComes++;
         });

@@ -1,4 +1,4 @@
-import DfiModel = require("../../src/dfiModel");
+import DfiModel from "../../src/dfiModel";
 import {IDfiBaseModelConfig, ITestModelObjectAttribs} from "../../src/dfiInterfaces";
 
 class TestModelObject extends DfiModel {
@@ -20,13 +20,13 @@ class TestModelObject extends DfiModel {
         return super.has(attribute);
     }
 
-    public set(attribute: string|object, value: any, silent?: boolean): this {
+    public set(attribute: string | object, value: any, silent?: boolean): this {
         return super.set(attribute, value, silent);
     }
 
-    public remove(attribute): boolean|IDBRequest {
+    public remove(attribute): boolean | IDBRequest {
         return super.remove(attribute);
     }
 }
 
-export = TestModelObject;
+export default TestModelObject;

@@ -1,13 +1,13 @@
 import {IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, IDfiProxyCallback, TEventName} from "./dfiInterfaces";
-import DfiModel = require("./dfiModel");
-import DfiEventObject = require("./dfiEventObject");
+import DfiModel from "./dfiModel";
+import DfiEventObject from "./dfiEventObject";
 
 const PROP_COLLECTION = "collection";
 const PROP_PROXY_CALLBACKS = "proxyCallbacks";
 const PROP_ID_FIELD = "idField";
 const PROP_MODEL = "model";
 
-abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
+export abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
     static get events(): IDfiBaseCollectionEvents {
         return EVENTS;
     }
@@ -188,7 +188,7 @@ abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
     }
 }
 
-export = DfiCollection;
+export default DfiCollection;
 
 const EVENTS: IDfiBaseCollectionEvents = {
     ...DfiEventObject.events,

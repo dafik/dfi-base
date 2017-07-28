@@ -1,9 +1,10 @@
 "use strict";
-const EventEmitter = require("./dfiEventEmitter");
-const DfiObject = require("./dfiObject");
+Object.defineProperty(exports, "__esModule", { value: true });
+const dfiEventEmitter_1 = require("./dfiEventEmitter");
+const dfiObject_1 = require("./dfiObject");
 const PROP_MAX_EVENTS = "maxEvents";
 const PROP_EMITTER = "emitter";
-class DfiEventObject extends DfiObject {
+class DfiEventObject extends dfiObject_1.default {
     static get events() {
         return EVENTS;
     }
@@ -19,7 +20,7 @@ class DfiEventObject extends DfiObject {
     constructor(options) {
         options.maxEvents = options.maxEvents || 10;
         super(options);
-        this.setProp(PROP_EMITTER, new EventEmitter());
+        this.setProp(PROP_EMITTER, new dfiEventEmitter_1.default());
     }
     destroy() {
         this.emit(DfiEventObject.events.DESTROY, this);
@@ -93,9 +94,10 @@ class DfiEventObject extends DfiObject {
         return this._ee.removeAllListeners(event);
     }
 }
+exports.DfiEventObject = DfiEventObject;
 const EVENTS = {
     ALL: Symbol(DfiEventObject.prototype.constructor.name + ":all"),
     DESTROY: Symbol(DfiEventObject.prototype.constructor.name + ":destroy")
 };
-module.exports = DfiEventObject;
+exports.default = DfiEventObject;
 //# sourceMappingURL=dfiEventObject.js.map

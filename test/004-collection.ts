@@ -1,6 +1,6 @@
-import assert = require("assert");
-import TestModelObject = require("./mock/modelObject");
-import TestCollectionObject = require("./mock/collectionObject");
+import * as assert from "assert";
+import TestModelObject from "./mock/modelObject";
+import TestCollectionObject from "./mock/collectionObject";
 
 describe("collection", () => {
 

@@ -1,6 +1,7 @@
 "use strict";
-const DfiCollection = require("../../src/dfiCollection");
-class TestCollectionObject extends DfiCollection {
+Object.defineProperty(exports, "__esModule", { value: true });
+const dfiCollection_1 = require("../../src/dfiCollection");
+class TestCollectionObject extends dfiCollection_1.default {
     has(element) {
         return super.has(element);
     }
@@ -35,5 +36,5 @@ class TestCollectionObject extends DfiCollection {
         return super.proxyOffAll();
     }
 }
-module.exports = TestCollectionObject;
+exports.default = TestCollectionObject;
 //# sourceMappingURL=collectionObject.js.map

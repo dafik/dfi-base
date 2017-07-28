@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const local_dfi_debug_logger_1 = require("local-dfi-debug-logger");
 const privateProperties = new WeakMap();
 const PROP_LOGGER = "logger";
@@ -49,5 +50,6 @@ class DfiObject {
         return privateProperties.get(this).delete(key);
     }
 }
-module.exports = DfiObject;
+exports.DfiObject = DfiObject;
+exports.default = DfiObject;
 //# sourceMappingURL=dfiObject.js.map

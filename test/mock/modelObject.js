@@ -1,6 +1,7 @@
 "use strict";
-const DfiModel = require("../../src/dfiModel");
-class TestModelObject extends DfiModel {
+Object.defineProperty(exports, "__esModule", { value: true });
+const dfiModel_1 = require("../../src/dfiModel");
+class TestModelObject extends dfiModel_1.default {
     constructor(attributes, options) {
         super(attributes, options);
     }
@@ -21,5 +22,5 @@ TestModelObject.map = new Map([
     ["a", "a"],
     ["b", "b"]
 ]);
-module.exports = TestModelObject;
+exports.default = TestModelObject;
 //# sourceMappingURL=modelObject.js.map

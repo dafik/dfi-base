@@ -1,5 +1,5 @@
-import TestEventObject = require("./mock/eventObject");
-import assert = require("assert");
+import TestEventObject from "./mock/eventObject";
+import * as assert from "assert";
 
 describe("event", () => {
 

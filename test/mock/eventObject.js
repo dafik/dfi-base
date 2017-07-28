@@ -1,6 +1,7 @@
 "use strict";
-const DfiEventObject = require("../../src/dfiEventObject");
-class TestEventObject extends DfiEventObject {
+Object.defineProperty(exports, "__esModule", { value: true });
+const dfiEventObject_1 = require("../../src/dfiEventObject");
+class TestEventObject extends dfiEventObject_1.default {
 }
-module.exports = TestEventObject;
+exports.default = TestEventObject;
 //# sourceMappingURL=eventObject.js.map

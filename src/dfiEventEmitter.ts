@@ -8,7 +8,7 @@ const has = Object.prototype.hasOwnProperty;
  * Minimal EventEmitter interface that is molded against the Node.js
  * EventEmitter interface.
  */
-class EventEmitter {
+export class EventEmitter {
 
     private _events: NullProto;
 
@@ -282,4 +282,4 @@ class EventEmitter {
     }
 }
 
-export = EventEmitter;
+export default EventEmitter;

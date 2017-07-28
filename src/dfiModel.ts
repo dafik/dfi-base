@@ -1,5 +1,5 @@
 import {IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
-import DfiEventObject = require("./dfiEventObject");
+import DfiEventObject from "./dfiEventObject";
 
 const modelUniqueId = (() => {
     let nextId = 1;
@@ -13,7 +13,7 @@ const PROP_ID_ATTRIBUTE = "idAttribute";
 const PROP_ID = "id";
 const PROP_LAST_UPDATE = "lastUpdate";
 
-abstract class DfiModel extends DfiEventObject {
+export abstract class DfiModel extends DfiEventObject {
 
     static get events(): IDfiBaseModelEvents {
         return EVENTS;
@@ -148,7 +148,7 @@ abstract class DfiModel extends DfiEventObject {
     }
 }
 
-export = DfiModel;
+export default DfiModel;
 
 const EVENTS: IDfiBaseModelEvents = {
     ...DfiEventObject.events,

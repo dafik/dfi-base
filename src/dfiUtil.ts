@@ -1,7 +1,7 @@
 import DebugLogger from "local-dfi-debug-logger";
 import {IDfiCallbackResult} from "./dfiInterfaces";
 
-class DfiUtil {
+export class DfiUtil {
     public static maybeCallbackOnce(fn: IDfiCallbackResult, context, err?, response?): void {
         if (typeof fn === "function") {
             if (fn.fired) {
@@ -40,4 +40,4 @@ class DfiUtil {
 
 const logger = new DebugLogger("dfi:util");
 
-export = DfiUtil;
+export default DfiUtil;

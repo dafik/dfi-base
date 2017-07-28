@@ -1,5 +1,5 @@
-import DfiCollection = require("../../src/dfiCollection");
-import TestModelObject = require("./modelObject");
+import DfiCollection from "../../src/dfiCollection";
+import TestModelObject from "./modelObject";
 import {TEventName} from "../../src/dfiInterfaces";
 
 class TestCollectionObject extends DfiCollection<any, TestModelObject> {
@@ -49,4 +49,4 @@ class TestCollectionObject extends DfiCollection<any, TestModelObject> {
     }
 }
 
-export = TestCollectionObject;
+export default TestCollectionObject;

@@ -1,11 +1,11 @@
-import EventEmitter = require("./dfiEventEmitter");
-import DfiObject = require("./dfiObject");
+import EventEmitter from "./dfiEventEmitter";
+import DfiObject from "./dfiObject";
 import {IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
 
 const PROP_MAX_EVENTS = "maxEvents";
 const PROP_EMITTER = "emitter";
 
-abstract class DfiEventObject extends DfiObject {
+export abstract class DfiEventObject extends DfiObject {
 
     static get events(): IDfiBaseEventObjectEvents {
         return EVENTS;
@@ -117,4 +117,4 @@ const EVENTS: IDfiBaseEventObjectEvents = {
     DESTROY: Symbol(DfiEventObject.prototype.constructor.name + ":destroy")
 };
 
-export = DfiEventObject;
+export default DfiEventObject;

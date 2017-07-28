@@ -4,7 +4,7 @@ import {IDfiBaseObjectConfig} from "./dfiInterfaces";
 const privateProperties: WeakMap<DfiObject, Map<any, any>> = new WeakMap();
 const PROP_LOGGER = "logger";
 
-abstract class DfiObject {
+export abstract class DfiObject {
     public destroyed?: boolean;
 
     public get logger(): DebugLogger {
@@ -66,4 +66,5 @@ abstract class DfiObject {
 
 }
 
-export = DfiObject;
+export default DfiObject;
+

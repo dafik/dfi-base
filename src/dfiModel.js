@@ -1,5 +1,6 @@
 "use strict";
-const DfiEventObject = require("./dfiEventObject");
+Object.defineProperty(exports, "__esModule", { value: true });
+const dfiEventObject_1 = require("./dfiEventObject");
 const modelUniqueId = (() => {
     let nextId = 1;
     return () => {
@@ -10,7 +11,7 @@ const PROP_ATTRIBUTES = "attributes";
 const PROP_ID_ATTRIBUTE = "idAttribute";
 const PROP_ID = "id";
 const PROP_LAST_UPDATE = "lastUpdate";
-class DfiModel extends DfiEventObject {
+class DfiModel extends dfiEventObject_1.default {
     static get events() {
         return EVENTS;
     }
@@ -122,6 +123,7 @@ class DfiModel extends DfiEventObject {
         }
     }
 }
-const EVENTS = Object.assign({}, DfiEventObject.events, { ADD: Symbol(DfiModel.prototype.constructor.name + ":add"), REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"), UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update") });
-module.exports = DfiModel;
+exports.DfiModel = DfiModel;
+exports.default = DfiModel;
+const EVENTS = Object.assign({}, dfiEventObject_1.default.events, { ADD: Symbol(DfiModel.prototype.constructor.name + ":add"), REMOVE: Symbol(DfiModel.prototype.constructor.name + ":delete"), UPDATE: Symbol(DfiModel.prototype.constructor.name + ":update") });
 //# sourceMappingURL=dfiModel.js.map

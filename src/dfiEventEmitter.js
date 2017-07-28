@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const EE_1 = require("./EE");
 const has = Object.prototype.hasOwnProperty;
 /**
@@ -249,5 +250,6 @@ class EventEmitter {
         return this;
     }
 }
-module.exports = EventEmitter;
+exports.EventEmitter = EventEmitter;
+exports.default = EventEmitter;
 //# sourceMappingURL=dfiEventEmitter.js.map

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const local_dfi_debug_logger_1 = require("local-dfi-debug-logger");
 class DfiUtil {
     static maybeCallbackOnce(fn, context, err, response) {
@@ -32,6 +33,7 @@ class DfiUtil {
         }
     }
 }
+exports.DfiUtil = DfiUtil;
 const logger = new local_dfi_debug_logger_1.default("dfi:util");
-module.exports = DfiUtil;
+exports.default = DfiUtil;
 //# sourceMappingURL=dfiUtil.js.map

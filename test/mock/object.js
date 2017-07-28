@@ -1,6 +1,7 @@
 "use strict";
-const DfiObject = require("../../src/dfiObject");
-class TestObject extends DfiObject {
+Object.defineProperty(exports, "__esModule", { value: true });
+const dfiObject_1 = require("../../src/dfiObject");
+class TestObject extends dfiObject_1.default {
     getProp(key) {
         return super.getProp(key);
     }
@@ -17,5 +18,5 @@ class TestObject extends DfiObject {
         return super.destroy();
     }
 }
-module.exports = TestObject;
+exports.default = TestObject;
 //# sourceMappingURL=object.js.map

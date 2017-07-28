@@ -1,4 +1,4 @@
-import DfiObject = require("../../src/dfiObject");
+import DfiObject from "../../src/dfiObject";
 
 class TestObject extends DfiObject {
 
@@ -23,4 +23,4 @@ class TestObject extends DfiObject {
     }
 }
 
-export = TestObject;
+export default TestObject;

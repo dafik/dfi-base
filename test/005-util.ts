@@ -1,5 +1,5 @@
-import assert = require("assert");
-import DfiUtil = require("../src/dfiUtil");
+import * as assert from "assert";
+import DfiUtil from "../src/dfiUtil";
 
 describe("util", () => {
 
