@@ -1,6 +1,6 @@
 import EventEmitter from "./dfiEventEmitter";
-import DfiObject from "./dfiObject";
 import {IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
+import DfiObject from "./dfiObject";
 
 const PROP_MAX_EVENTS = "maxEvents";
 const PROP_EMITTER = "emitter";
@@ -100,14 +100,14 @@ export abstract class DfiEventObject extends DfiObject {
             this.logger.warn("off event not symbol %s", event);
         }
 
-        if (!this._ee.eventNames(true)) {
+        if (this._ee.eventNames(true).length === 0) {
             return;
         }
 
         return this._ee.removeListener(event, fn, context, once);
     }
 
-    public removeAllListeners(event?: string): EventEmitter {
+    public removeAllListeners(event?: TEventName): EventEmitter {
         return this._ee.removeAllListeners(event);
     }
 }

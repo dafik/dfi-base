@@ -1,5 +1,5 @@
-import { IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents } from "./dfiInterfaces";
 import DfiEventObject from "./dfiEventObject";
+import { IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents } from "./dfiInterfaces";
 export declare abstract class DfiModel extends DfiEventObject {
     static readonly events: IDfiBaseModelEvents;
     protected static map: Map<string, string>;

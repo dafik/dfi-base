@@ -5,6 +5,7 @@ export declare class DfiUtil {
     static obj2map<V>(obj: {
         [key: string]: V;
     }): Map<string, V>;
+    static cloneLiteral(literal: {}): any;
     private static readonly logger;
     private static _entries<V>(obj);
 }

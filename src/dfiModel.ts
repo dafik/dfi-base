@@ -1,5 +1,5 @@
-import {IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
 import DfiEventObject from "./dfiEventObject";
+import {IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
 
 const modelUniqueId = (() => {
     let nextId = 1;
@@ -31,6 +31,7 @@ export abstract class DfiModel extends DfiEventObject {
 
     constructor(attributes?: IDfiBaseModelAttribs, options?: IDfiBaseModelConfig) {
         options = options || {};
+        attributes = attributes || {};
         if (!options.loggerName) {
             options.loggerName = "dfi:model:";
         }

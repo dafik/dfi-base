@@ -24,6 +24,10 @@ export class DfiUtil {
         return new Map(DfiUtil._entries<V>(obj));
     }
 
+    public static cloneLiteral(literal: {}) {
+        return JSON.parse(JSON.stringify(literal));
+    }
+
     private static get logger() {
         return logger;
     }

@@ -22,6 +22,9 @@ class DfiUtil {
     static obj2map(obj) {
         return new Map(DfiUtil._entries(obj));
     }
+    static cloneLiteral(literal) {
+        return JSON.parse(JSON.stringify(literal));
+    }
     static get logger() {
         return logger;
     }

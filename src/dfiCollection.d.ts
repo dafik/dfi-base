@@ -1,6 +1,6 @@
+import DfiEventObject from "./dfiEventObject";
 import { IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, TEventName } from "./dfiInterfaces";
 import DfiModel from "./dfiModel";
-import DfiEventObject from "./dfiEventObject";
 export declare abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObject {
     static readonly events: IDfiBaseCollectionEvents;
     readonly size: number;

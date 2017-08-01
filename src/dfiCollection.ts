@@ -1,6 +1,6 @@
+import DfiEventObject from "./dfiEventObject";
 import {IDfiBaseCollectionConfig, IDfiBaseCollectionEvents, IDfiProxyCallback, TEventName} from "./dfiInterfaces";
 import DfiModel from "./dfiModel";
-import DfiEventObject from "./dfiEventObject";
 
 const PROP_COLLECTION = "collection";
 const PROP_PROXY_CALLBACKS = "proxyCallbacks";
@@ -173,7 +173,8 @@ export abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObjec
                 handlers.forEach((handler) => {
                     handler.c.apply(handler.t, args);
                 });
-            } else if (this._proxyHandlers.has(DfiEventObject.events.ALL)) {
+            }
+            if (this._proxyHandlers.has(DfiEventObject.events.ALL)) {
                 const args = Array.prototype.slice.call(arguments);
                 const handlers = this._proxyHandlers.get(DfiEventObject.events.ALL);
                 handlers.forEach((handler) => {

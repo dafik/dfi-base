@@ -1,6 +1,6 @@
 import EventEmitter from "./dfiEventEmitter";
-import DfiObject from "./dfiObject";
 import { IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName } from "./dfiInterfaces";
+import DfiObject from "./dfiObject";
 export declare abstract class DfiEventObject extends DfiObject {
     static readonly events: IDfiBaseEventObjectEvents;
     readonly eventNames: TEventName[];
@@ -12,6 +12,6 @@ export declare abstract class DfiEventObject extends DfiObject {
     once(event: TEventName, fn: (...args) => void, context?: any): EventEmitter;
     emit(event: TEventName, ...args: any[]): boolean;
     off(event: TEventName, fn?: (...args) => void, context?: any, once?: boolean): EventEmitter;
-    removeAllListeners(event?: string): EventEmitter;
+    removeAllListeners(event?: TEventName): EventEmitter;
 }
 export default DfiEventObject;

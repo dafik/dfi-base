@@ -23,6 +23,7 @@ class DfiModel extends dfiEventObject_1.default {
     }
     constructor(attributes, options) {
         options = options || {};
+        attributes = attributes || {};
         if (!options.loggerName) {
             options.loggerName = "dfi:model:";
         }

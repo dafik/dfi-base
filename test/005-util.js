@@ -14,5 +14,33 @@ describe("util", () => {
         assert.equal(z.get("b"), obj.b);
         done();
     });
+    it("clone literal", (done) => {
+        const original = {
+            a: "test",
+            b: 1,
+            c: {
+                a: "test",
+                b: 1
+            }
+        };
+        const newcopy = dfiUtil_1.default.cloneLiteral(original);
+        assert.deepStrictEqual(newcopy, original, "clone differ");
+        done();
+    });
+    it("maybeCallback", (done) => {
+        dfiUtil_1.default.maybeCallback(() => {
+            done();
+        }, null);
+    });
+    it("maybeCallbackOnce", (done) => {
+        const callback = () => {
+            assert.ok(true);
+        };
+        dfiUtil_1.default.maybeCallbackOnce(callback, null);
+        assert.throws(() => {
+            dfiUtil_1.default.maybeCallbackOnce(callback, null, true);
+        });
+        done();
+    });
 });
 //# sourceMappingURL=005-util.js.map

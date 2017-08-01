@@ -85,7 +85,7 @@ class DfiEventObject extends dfiObject_1.default {
         else if (typeof event !== "symbol") {
             this.logger.warn("off event not symbol %s", event);
         }
-        if (!this._ee.eventNames(true)) {
+        if (this._ee.eventNames(true).length === 0) {
             return;
         }
         return this._ee.removeListener(event, fn, context, once);

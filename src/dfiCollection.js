@@ -141,7 +141,7 @@ class DfiCollection extends dfiEventObject_1.default {
                     handler.c.apply(handler.t, args);
                 });
             }
-            else if (this._proxyHandlers.has(dfiEventObject_1.default.events.ALL)) {
+            if (this._proxyHandlers.has(dfiEventObject_1.default.events.ALL)) {
                 const args = Array.prototype.slice.call(arguments);
                 const handlers = this._proxyHandlers.get(dfiEventObject_1.default.events.ALL);
                 handlers.forEach((handler) => {

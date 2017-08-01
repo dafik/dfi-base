@@ -1,12 +1,13 @@
 import {IDfiBaseModelConfig, ITestModelObjectAttribs} from "../../src/dfiInterfaces";
 import DfiModel from "../../src/dfiModel";
 
-class TestModelObject extends DfiModel {
+class TestModelObject2 extends DfiModel {
 
-    protected static map = new Map([
+ /*   protected static map = new Map([
         ["a", "a"],
-        ["b", "b"]
-    ]);
+        ["b", "b"],
+        ["testAttribute", "testAttribute"]
+    ]);*/
 
     constructor(attributes?: ITestModelObjectAttribs, options?: IDfiBaseModelConfig) {
         super(attributes, options);
@@ -29,4 +30,4 @@ class TestModelObject extends DfiModel {
     }
 }
 
-export default TestModelObject;
+export default TestModelObject2;

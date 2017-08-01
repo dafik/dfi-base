@@ -14,6 +14,7 @@ class EventEmitter {
     eventNames(exists) {
         const events = this._events;
         const names = [];
+        let symbols = [];
         let name;
         if (!events) {
             return names;
@@ -24,15 +25,14 @@ class EventEmitter {
             }
         }
         if (Object.getOwnPropertySymbols) {
-            const symbols = Object.getOwnPropertySymbols(events);
+            symbols = Object.getOwnPropertySymbols(events);
             if (!exists) {
                 symbols.forEach((elem, index) => {
                     symbols[index] = Symbol.prototype.toString.call(elem);
                 });
             }
-            return names.concat(symbols);
         }
-        return names;
+        return names.concat(symbols);
     }
     /**
      * Return a list of assigned event listeners.
@@ -78,26 +78,34 @@ class EventEmitter {
             return false;
         }
         const listeners = this._events[event];
+        const listenersFns = this.listeners(event);
         const len = arguments.length;
         let args1;
         let i;
-        if ("function" === typeof listeners.fn) {
+        if (listenersFns.length === 1) {
+            const listenersFn = listenersFns.pop();
             if (listeners.once) {
-                this.removeListener(event, listeners.fn, undefined, true);
+                this.removeListener(event, listenersFn, undefined, true);
             }
             switch (len) {
                 case 1:
-                    return listeners.fn.call(listeners.context), true;
+                    // noinspection CommaExpressionJS
+                    return listenersFn.call(listeners.context), true;
                 case 2:
-                    return listeners.fn.call(listeners.context, a1), true;
+                    // noinspection CommaExpressionJS
+                    return listenersFn.call(listeners.context, a1), true;
                 case 3:
-                    return listeners.fn.call(listeners.context, a1, a2), true;
+                    // noinspection CommaExpressionJS
+                    return listenersFn.call(listeners.context, a1, a2), true;
                 case 4:
-                    return listeners.fn.call(listeners.context, a1, a2, a3), true;
+                    // noinspection CommaExpressionJS
+                    return listenersFn.call(listeners.context, a1, a2, a3), true;
                 case 5:
-                    return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+                    // noinspection CommaExpressionJS
+                    return listenersFn.call(listeners.context, a1, a2, a3, a4), true;
                 case 6:
-                    return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
+                    // noinspection CommaExpressionJS
+                    return listenersFn.call(listeners.context, a1, a2, a3, a4, a5), true;
                 default:
                     for (i = 1, args1 = new Array(len - 1); i < len; i++) {
                         args1[i - 1] = arguments[i];
@@ -143,7 +151,7 @@ class EventEmitter {
      * @api public
      */
     on(event, fn, context) {
-        const listener = new EE_1.default(fn, context || this);
+        const listener = new EE_1.default(fn, context);
         if (!this._events) {
             this._events = Object.create(null);
         }
@@ -169,7 +177,7 @@ class EventEmitter {
      * @api public
      */
     once(event, fn, context) {
-        const listener = new EE_1.default(fn, context || this, true);
+        const listener = new EE_1.default(fn, context, true);
         if (!this._events) {
             this._events = Object.create(null);
         }
@@ -205,19 +213,13 @@ class EventEmitter {
         const events = [];
         if (fn) {
             if (listeners.fn) {
-                if (listeners.fn !== fn
-                    || (once && !listeners.once)
-                    || (context && listeners.context !== context)) {
+                if (!(listeners.fn === fn && once === listeners.once && listeners.context === context)) {
                     events.push(listeners);
                 }
             }
             else {
-                for (let i = 0, length = listeners.length; i < length; i++) {
-                    if (listeners[i].fn !== fn
-                        || (once && !listeners[i].once)
-                        || (context && listeners[i].context !== context)) {
-                        events.push(listeners[i]);
-                    }
+                if (!(listeners.fn === fn && once === listeners.once && listeners.context === context)) {
+                    events.push(listeners);
                 }
             }
         }
