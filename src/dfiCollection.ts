@@ -195,6 +195,6 @@ const EVENTS: IDfiBaseCollectionEvents = {
     ...DfiEventObject.events,
 
     ADD: Symbol(DfiCollection.prototype.constructor.name + ":add"),
-    REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":delete"),
+    REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":remove"),
     UPDATE: Symbol(DfiCollection.prototype.constructor.name + ":update")
 };

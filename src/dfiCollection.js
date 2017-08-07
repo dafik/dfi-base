@@ -156,5 +156,5 @@ class DfiCollection extends dfiEventObject_1.default {
 }
 exports.DfiCollection = DfiCollection;
 exports.default = DfiCollection;
-const EVENTS = Object.assign({}, dfiEventObject_1.default.events, { ADD: Symbol(DfiCollection.prototype.constructor.name + ":add"), REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":delete"), UPDATE: Symbol(DfiCollection.prototype.constructor.name + ":update") });
+const EVENTS = Object.assign({}, dfiEventObject_1.default.events, { ADD: Symbol(DfiCollection.prototype.constructor.name + ":add"), REMOVE: Symbol(DfiCollection.prototype.constructor.name + ":remove"), UPDATE: Symbol(DfiCollection.prototype.constructor.name + ":update") });
 //# sourceMappingURL=dfiCollection.js.map
