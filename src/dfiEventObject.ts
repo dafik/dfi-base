@@ -36,7 +36,7 @@ export abstract class DfiEventObject extends DfiObject {
         super.destroy();
     }
 
-    public on(event: TEventName, fn: (...args) => void, context?: any): EventEmitter {
+    public on(event: TEventName, fn: (...args) => void, context?: any): this {
         if (event === undefined) {
             throw new Error("undefined event");
         } else if (typeof event !== "symbol") {
@@ -47,10 +47,10 @@ export abstract class DfiEventObject extends DfiObject {
         if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
-        return ret;
+        return this;
     }
 
-    public once(event: TEventName, fn: (...args) => void, context?: any): EventEmitter {
+    public once(event: TEventName, fn: (...args) => void, context?: any): this {
         if (event === undefined) {
             throw new Error("undefined event");
         } else if (typeof event !== "symbol") {
@@ -62,7 +62,7 @@ export abstract class DfiEventObject extends DfiObject {
         if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
-        return ret;
+        return this;
     }
 
     public emit(event: TEventName, ...args): boolean {
@@ -92,7 +92,7 @@ export abstract class DfiEventObject extends DfiObject {
         return ret;
     }
 
-    public off(event: TEventName, fn?: (...args) => void, context?: any, once?: boolean): EventEmitter {
+    public off(event: TEventName, fn?: (...args) => void, context?: any, once?: boolean): this {
 
         if (event === undefined) {
             throw new Error("undefined event");
@@ -104,11 +104,14 @@ export abstract class DfiEventObject extends DfiObject {
             return;
         }
 
-        return this._ee.removeListener(event, fn, context, once);
+        this._ee.removeListener(event, fn, context, once);
+
+        return this;
     }
 
-    public removeAllListeners(event?: TEventName): EventEmitter {
-        return this._ee.removeAllListeners(event);
+    public removeAllListeners(event?: TEventName): this {
+        this._ee.removeAllListeners(event);
+        return this;
     }
 }
 

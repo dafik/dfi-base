@@ -38,7 +38,7 @@ class DfiEventObject extends dfiObject_1.default {
         if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
-        return ret;
+        return this;
     }
     once(event, fn, context) {
         if (event === undefined) {
@@ -51,7 +51,7 @@ class DfiEventObject extends dfiObject_1.default {
         if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
-        return ret;
+        return this;
     }
     emit(event, ...args) {
         let ret;
@@ -88,10 +88,12 @@ class DfiEventObject extends dfiObject_1.default {
         if (this._ee.eventNames(true).length === 0) {
             return;
         }
-        return this._ee.removeListener(event, fn, context, once);
+        this._ee.removeListener(event, fn, context, once);
+        return this;
     }
     removeAllListeners(event) {
-        return this._ee.removeAllListeners(event);
+        this._ee.removeAllListeners(event);
+        return this;
     }
 }
 exports.DfiEventObject = DfiEventObject;
