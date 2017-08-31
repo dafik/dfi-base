@@ -32,7 +32,7 @@ class DfiCollection extends dfiEventObject_1.default {
     }
     destroy() {
         this.removeAllListeners();
-        this.getProp(PROP_COLLECTION).clear();
+        this.clear();
         this.proxyOffAll();
         super.destroy();
     }

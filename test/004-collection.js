@@ -109,5 +109,9 @@ describe("collection", () => {
         });
         testModel.set("test", "test");
     });
+    it("proxy events all when model removed", (done) => {
+        done();
+        // TODO implement
+    });
 });
 //# sourceMappingURL=004-collection.js.map

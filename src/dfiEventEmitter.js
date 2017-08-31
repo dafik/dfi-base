@@ -209,20 +209,25 @@ class EventEmitter {
         if (!this._events || !this._events[event]) {
             return this;
         }
-        const listeners = this._events[event];
+        let listeners = this._events[event];
         const events = [];
-        if (fn) {
-            if (listeners.fn) {
-                if (!(listeners.fn === fn && once === listeners.once && listeners.context === context)) {
-                    events.push(listeners);
-                }
-            }
-            else {
-                if (!(listeners.fn === fn && once === listeners.once && listeners.context === context)) {
-                    events.push(listeners);
-                }
-            }
+        if (!Array.isArray(listeners)) {
+            listeners = [listeners];
         }
+        listeners.forEach((listener) => {
+            if (fn) {
+                if (listener.fn) {
+                    if (!(listener.fn === fn && once === listener.once && listener.context === context)) {
+                        events.push(listener);
+                    }
+                }
+                else {
+                    if (!(listener.fn === fn && once === listener.once && listener.context === context)) {
+                        events.push(listener);
+                    }
+                }
+            }
+        });
         //
         // Reset the array, or remove it completely if we have no more listeners.
         //
