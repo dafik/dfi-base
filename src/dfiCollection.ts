@@ -82,12 +82,12 @@ export abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObjec
 
     protected remove(element: M | any): boolean {
         const id = this.getProp(PROP_MODEL) && element instanceof this.getProp(PROP_MODEL) ? element.id : element;
-        element = this.getProp(PROP_COLLECTION).get(id);
+        element = (this.getProp(PROP_COLLECTION).get(id) as M);
 
         let res = false;
         if (element) {
             res = this.getProp(PROP_COLLECTION).delete(id);
-            element.on(DfiEventObject.events.ALL, this._onMemberAll, this);
+            (element as M).off(DfiEventObject.events.ALL, this._onMemberAll, this);
 
             this.emit(DfiCollection.events.REMOVE, element, this.getProp(PROP_COLLECTION));
             this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), element, -1);
@@ -106,8 +106,12 @@ export abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObjec
     }
 
     protected clear(): this {
-        this.getProp(PROP_COLLECTION).clear();
-        this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION));
+        const collection = this.getProp(PROP_COLLECTION);
+        collection.forEach((element: M) => {
+            this.remove(element);
+        });
+        collection.clear();
+        this.emit(DfiCollection.events.UPDATE, collection);
         return this;
     }
 
