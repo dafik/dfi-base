@@ -233,6 +233,7 @@ export class EventEmitter {
         }
 
         let listeners = this._events[event];
+        once = once || false;
         const events = [];
 
         if (!Array.isArray(listeners)) {

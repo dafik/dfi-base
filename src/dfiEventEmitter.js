@@ -210,6 +210,7 @@ class EventEmitter {
             return this;
         }
         let listeners = this._events[event];
+        once = once || false;
         const events = [];
         if (!Array.isArray(listeners)) {
             listeners = [listeners];
