@@ -43,7 +43,7 @@ export abstract class DfiCollection<K, M extends DfiModel> extends DfiEventObjec
 
     public destroy() {
         this.removeAllListeners();
-        this.getProp(PROP_COLLECTION).clear();
+        this.clear();
         this.proxyOffAll();
         super.destroy();
     }
