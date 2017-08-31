@@ -66,7 +66,7 @@ class DfiCollection extends dfiEventObject_1.default {
         let res = false;
         if (element) {
             res = this.getProp(PROP_COLLECTION).delete(id);
-            element.on(dfiEventObject_1.default.events.ALL, this._onMemberAll, this);
+            element.off(dfiEventObject_1.default.events.ALL, this._onMemberAll, this);
             this.emit(DfiCollection.events.REMOVE, element, this.getProp(PROP_COLLECTION));
             this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION), element, -1);
         }
@@ -81,8 +81,12 @@ class DfiCollection extends dfiEventObject_1.default {
         return keys;
     }
     clear() {
-        this.getProp(PROP_COLLECTION).clear();
-        this.emit(DfiCollection.events.UPDATE, this.getProp(PROP_COLLECTION));
+        const collection = this.getProp(PROP_COLLECTION);
+        collection.forEach((element) => {
+            this.remove(element);
+        });
+        collection.clear();
+        this.emit(DfiCollection.events.UPDATE, collection);
         return this;
     }
     forEach(fn, thisArg) {

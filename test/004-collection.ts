@@ -144,4 +144,9 @@ describe("collection", () => {
 
     });
 
+    it("proxy events all when model removed", (done) => {
+        done();
+        // TODO implement
+    });
+
 });
