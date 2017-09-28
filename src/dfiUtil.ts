@@ -28,6 +28,19 @@ export class DfiUtil {
         return JSON.parse(JSON.stringify(literal));
     }
 
+    public static formatError(err?: IErrorDescription) {
+        if (err instanceof Error) {
+            if (err.description && err.description instanceof Error) {
+                return [
+                    ...["Error: " + err.message],
+                    ...DfiUtil.formatError(err.description)
+                ];
+            } else {
+                return ["Error: " + err.message];
+            }
+        }
+    }
+
     private static get logger() {
         return logger;
     }
@@ -39,8 +52,12 @@ export class DfiUtil {
             }
         }
     }
-
 }
+
+interface IErrorDescription extends Error {
+    description?: Error;
+}
+
 
 const logger = new DebugLogger("dfi:util");
 

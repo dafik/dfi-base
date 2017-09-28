@@ -25,6 +25,19 @@ class DfiUtil {
     static cloneLiteral(literal) {
         return JSON.parse(JSON.stringify(literal));
     }
+    static formatError(err) {
+        if (err instanceof Error) {
+            if (err.description && err.description instanceof Error) {
+                return [
+                    ...["Error: " + err.message],
+                    ...DfiUtil.formatError(err.description)
+                ];
+            }
+            else {
+                return ["Error: " + err.message];
+            }
+        }
+    }
     static get logger() {
         return logger;
     }
