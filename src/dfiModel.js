@@ -62,8 +62,7 @@ class DfiModel extends dfiEventObject_1.default {
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
             attr[name] = value;
         });
-        const prop = super.toPlain();
-        return { attr, prop };
+        return Object.assign({ attr }, super.toPlain());
     }
     get(attribute) {
         if (this.getProp(PROP_ATTRIBUTES)) {

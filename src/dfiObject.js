@@ -34,7 +34,7 @@ class DfiObject {
                 }
             });
         }
-        return prop;
+        return { prop };
     }
     getProp(key) {
         return privateProperties.get(this).get(key);

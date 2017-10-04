@@ -34,7 +34,7 @@ class DfiEventObject extends dfiObject_1.default {
         else if (typeof event !== "symbol") {
             this.logger.warn('on event not symbol "%s"', event);
         }
-        const ret = this._ee.on(event, fn, context);
+        this._ee.on(event, fn, context);
         if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
@@ -47,7 +47,7 @@ class DfiEventObject extends dfiObject_1.default {
         else if (typeof event !== "symbol") {
             this.logger.warn('once event not symbol "%s"', event);
         }
-        const ret = this._ee.once(event, fn, context);
+        this._ee.once(event, fn, context);
         if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
         }
@@ -94,6 +94,9 @@ class DfiEventObject extends dfiObject_1.default {
     removeAllListeners(event) {
         this._ee.removeAllListeners(event);
         return this;
+    }
+    toPlain() {
+        return super.toPlain();
     }
 }
 exports.DfiEventObject = DfiEventObject;

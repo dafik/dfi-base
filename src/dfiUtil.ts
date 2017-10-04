@@ -1,6 +1,12 @@
 import DebugLogger from "local-dfi-debug-logger";
 import {IDfiCallbackResult} from "./dfiInterfaces";
 
+interface IErrorDescription extends Error {
+    description?: Error;
+}
+
+const logger = new DebugLogger("dfi:util");
+
 export class DfiUtil {
     public static maybeCallbackOnce(fn: IDfiCallbackResult, context, err?, response?): void {
         if (typeof fn === "function") {
@@ -53,12 +59,5 @@ export class DfiUtil {
         }
     }
 }
-
-interface IErrorDescription extends Error {
-    description?: Error;
-}
-
-
-const logger = new DebugLogger("dfi:util");
 
 export default DfiUtil;

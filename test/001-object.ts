@@ -16,9 +16,11 @@ describe("object", () => {
         const test = new TestObject({loggerName});
 
         const expected = JSON.stringify({
-            logger: {
-                _loggers: {},
-                _name: "testLogger:TestObject"
+            prop: {
+                logger: {
+                    _loggers: {},
+                    _name: "testLogger:TestObject"
+                }
             }
         });
 

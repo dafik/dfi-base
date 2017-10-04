@@ -1,7 +1,6 @@
 import {TEventName} from "./dfiInterfaces";
 import EE from "./EE";
 import {NullProto} from "./NullProto";
-import {listeners} from "cluster";
 
 const has = Object.prototype.hasOwnProperty;
 

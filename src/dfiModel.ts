@@ -1,5 +1,5 @@
 import DfiEventObject from "./dfiEventObject";
-import {IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
+import {IDfiBase2Plain, IDfiBaseModel2Plain, IDfiBaseModelAttribs, IDfiBaseModelConfig, IDfiBaseModelEvents} from "./dfiInterfaces";
 
 const modelUniqueId = (() => {
     let nextId = 1;
@@ -71,14 +71,15 @@ export abstract class DfiModel extends DfiEventObject {
         return attr;
     }
 
-    public toPlain(): object {
-        const attr = {};
+    public toPlain(): IDfiBaseModel2Plain {
+        const attr: IDfiBase2Plain = {};
         this.getProp(PROP_ATTRIBUTES).forEach((value, name) => {
             attr[name] = value;
         });
-
-        const prop = super.toPlain();
-        return {attr, prop};
+        return {
+            attr,
+            ...super.toPlain()
+        };
     }
 
     protected get(attribute: string): any {

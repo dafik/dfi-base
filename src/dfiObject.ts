@@ -1,5 +1,5 @@
 import DebugLogger from "local-dfi-debug-logger";
-import {IDfiBaseObjectConfig} from "./dfiInterfaces";
+import {IDfiBaseObject2Plain, IDfiBaseObjectConfig} from "./dfiInterfaces";
 
 const privateProperties: WeakMap<DfiObject, Map<any, any>> = new WeakMap();
 const PROP_LOGGER = "logger";
@@ -34,7 +34,7 @@ export abstract class DfiObject {
         this.destroyed = true;
     }
 
-    public toPlain(): object {
+    public toPlain(): IDfiBaseObject2Plain {
         const prop = {};
         const p = privateProperties.get(this);
         if (p) {
@@ -44,7 +44,7 @@ export abstract class DfiObject {
                 }
             });
         }
-        return prop;
+        return {prop};
     }
 
     protected getProp(key: any): any {
@@ -67,4 +67,3 @@ export abstract class DfiObject {
 }
 
 export default DfiObject;
-

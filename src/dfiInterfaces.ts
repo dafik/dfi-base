@@ -1,4 +1,6 @@
 // config
+import EventEmitter from "./dfiEventEmitter";
+
 export interface IDfiBaseObjectConfig extends Object {
     loggerName?: string;
     maxEvents?: number;
@@ -64,4 +66,25 @@ export interface IDfiProxyCallback {
 export interface ITestModelObjectAttribs extends IDfiBaseModelAttribs {
     a?: string;
     b?: string;
+}
+
+export interface IDfiBase2Plain {
+    [key: string]: any;
+}
+
+export interface IDfiBaseEvent2Plain extends IDfiBase2Plain {
+    emitter: EventEmitter;
+}
+
+export interface IDfiBaseObject2Plain {
+    prop: IDfiBase2Plain;
+}
+
+export interface IDfiBaseEventObject2Plain {
+    prop: IDfiBaseEvent2Plain;
+}
+
+export interface IDfiBaseModel2Plain {
+    attr: IDfiBase2Plain;
+    prop: IDfiBaseEvent2Plain;
 }

@@ -13,9 +13,11 @@ describe("object", () => {
         const loggerName = "testLogger:";
         const test = new object_1.default({ loggerName });
         const expected = JSON.stringify({
-            logger: {
-                _loggers: {},
-                _name: "testLogger:TestObject"
+            prop: {
+                logger: {
+                    _loggers: {},
+                    _name: "testLogger:TestObject"
+                }
             }
         });
         assert.equal(JSON.stringify(test.toPlain()), expected);

@@ -12,7 +12,7 @@ describe("event", () => {
     it("toPlain", (done) => {
         const loggerName = "testLogger:";
         const test = new eventObject_1.default({ loggerName });
-        const expected = '{"logger":{"_loggers":{},"_name":"testLogger:TestEventObject"},"maxEvents":10,"emitter":{}}';
+        const expected = '{"prop":{"logger":{"_loggers":{},"_name":"testLogger:TestEventObject"},"maxEvents":10,"emitter":{}}}';
         assert.equal(JSON.stringify(test.toPlain()), expected);
         done();
     });

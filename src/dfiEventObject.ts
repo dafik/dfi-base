@@ -1,5 +1,5 @@
 import EventEmitter from "./dfiEventEmitter";
-import {IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
+import {IDfiBaseEventObject2Plain, IDfiBaseEventObjectEvents, IDfiBaseObjectConfig, TEventName} from "./dfiInterfaces";
 import DfiObject from "./dfiObject";
 
 const PROP_MAX_EVENTS = "maxEvents";
@@ -42,7 +42,7 @@ export abstract class DfiEventObject extends DfiObject {
         } else if (typeof event !== "symbol") {
             this.logger.warn('on event not symbol "%s"', event);
         }
-        const ret = this._ee.on(event, fn, context);
+        this._ee.on(event, fn, context);
 
         if (this._ee.eventNames(true).length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
@@ -57,7 +57,7 @@ export abstract class DfiEventObject extends DfiObject {
             this.logger.warn('once event not symbol "%s"', event);
         }
 
-        const ret = this._ee.once(event, fn, context);
+        this._ee.once(event, fn, context);
 
         if (this._ee.eventNames().length > this.maxEvents) {
             this.logger.error("memory leak detected: ");
@@ -112,6 +112,10 @@ export abstract class DfiEventObject extends DfiObject {
     public removeAllListeners(event?: TEventName): this {
         this._ee.removeAllListeners(event);
         return this;
+    }
+
+    public toPlain(): IDfiBaseEventObject2Plain {
+        return (super.toPlain() as IDfiBaseEventObject2Plain);
     }
 }
 
