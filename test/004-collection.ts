@@ -17,7 +17,7 @@ describe("collection", () => {
         const loggerName = "testLogger:";
         const test = new TestCollectionObject({loggerName});
 
-        const expected = '{"prop":{"logger":{"_loggers":{},"_name":"testLogger:TestCollectionObject"},"maxEvents":10,"emitter":{},"collection":{},"proxyCallbacks":{}}';
+        const expected = '{"prop":{"logger":{"_loggers":{},"_name":"testLogger:TestCollectionObject"},"maxEvents":10,"emitter":{},"collection":{},"proxyCallbacks":{}}}';
 
         assert.equal(JSON.stringify(test.toPlain()), expected);
         done();

@@ -1,16 +1,19 @@
 {
-  "name": "local-dfi-base",
+  "name": "dfi-base",
   "version": "0.3.12",
-  "description": "dfi-base files",
+  "description": "abstract base classes: object with private properties (weak map) +  event emiiting model and collection  + utils (ES6) ",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.dev:dfi/dfi-base.git"
+    "url": "https://github.com/dafik/dfi-base.git"
   },
-  "author": "z.wieczorek",
-  "license": "UNLICENSED",
+  "author": {
+    "name": "Zbyszek Wieczorek",
+    "email": "zbyszek.wieczorek at gmal.com"
+  },
+  "license": "MIT",
   "dependencies": {
-    "local-dfi-debug-logger": "*"
+    "dfi-debug-logger": "*"
   },
   "typings": "index.ts",
   "devDependencies": {

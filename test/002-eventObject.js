@@ -65,6 +65,7 @@ describe("event", () => {
             loggerName,
             maxEvents: 1
         });
+        const logger = test.logger;
         test.on(event, () => {
             assert.ok(true);
         });
