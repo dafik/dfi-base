@@ -1,4 +1,4 @@
-import DebugLogger from "local-dfi-debug-logger";
+import DebugLogger from "dfi-debug-logger";
 import {IDfiCallbackResult} from "./dfiInterfaces";
 
 interface IErrorDescription extends Error {

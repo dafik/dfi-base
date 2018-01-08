@@ -1,4 +1,4 @@
-import DebugLogger from "local-dfi-debug-logger";
+import DebugLogger from "dfi-debug-logger";
 import {IDfiBaseObject2Plain, IDfiBaseObjectConfig} from "./dfiInterfaces";
 
 const privateProperties: WeakMap<DfiObject, Map<any, any>> = new WeakMap();
