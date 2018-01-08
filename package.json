@@ -1,6 +1,6 @@
 {
   "name": "dfi-base",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "abstract base classes: object with private properties (weak map) +  event emiiting model and collection  + utils (ES6) ",
   "main": "index.js",
   "repository": {
